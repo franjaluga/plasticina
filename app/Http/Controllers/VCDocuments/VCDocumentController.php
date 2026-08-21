@@ -7,23 +7,16 @@ use App\Models\Masters\DocumentType;
 use App\Models\VCDocuments\VCDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;          // para la validación de CSV
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class VCDocumentController
 {
-    /* ------------------------------------------------------------------
-     *  Vistas
-     * ------------------------------------------------------------------ */
 
     public function create()
     {
         return view('vc_documents.create');
     }
-
-    /* ------------------------------------------------------------------
-     *  Validaciones auxiliares (Ajax)
-     * ------------------------------------------------------------------ */
 
     public function checkEntity($rut)
     {
@@ -45,31 +38,19 @@ class VCDocumentController
         ]);
     }
 
-    /* ------------------------------------------------------------------
-     *  Lógica de guardado (tanto para formularios como para CSV)
-     * ------------------------------------------------------------------ */
-
-    /**
-     * Guarda un documento a partir de los datos validados.
-     *
-     * @param array $validated Los datos ya validados y con el formato correcto
-     * @return VCDocument El modelo creado
-     */
     private function persistDocument(array $validated): VCDocument
     {
-        // 1. Entidad (o crearla)
+
         $entity = Entity::firstOrCreate(
             ['rut' => $validated['rut']],
             ['name' => $validated['entity_name']]
         );
 
-        // 2. Tipo de documento (o crearlo)
         $documentType = DocumentType::firstOrCreate(
             ['doctype' => $validated['doctype']],
             ['name' => $validated['document_type_name']]
         );
 
-        // 3. Evitar duplicados
         $exists = VCDocument::where('entity_id', $entity->id)
                             ->where('document_type_id', $documentType->id)
                             ->where('folio', $validated['folio'])
@@ -81,7 +62,6 @@ class VCDocumentController
             );
         }
 
-        // 4. Prepara los datos finales
         $validated = array_merge($validated, [
             'entity_id'         => $entity->id,
             'document_type_id'  => $documentType->id,
@@ -94,13 +74,8 @@ class VCDocumentController
             $validated['document_type_name']
         );
 
-        // 5. Persistir y devolver
         return VCDocument::create($validated);
     }
-
-    /* ------------------------------------------------------------------
-     *  Almacena desde el formulario web
-     * ------------------------------------------------------------------ */
 
     public function store(Request $request)
     {
@@ -140,16 +115,6 @@ class VCDocumentController
         }
     }
 
-    /* ------------------------------------------------------------------
-     *  Importación CSV
-     * ------------------------------------------------------------------ */
-
-    /**
-     * Subir un archivo CSV y crear documentos línea por línea.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
-     */
     public function csvImport(Request $request)
     {
         set_time_limit(300);
@@ -196,9 +161,6 @@ class VCDocumentController
 
                 $data = array_combine($headers, $row);
 
-                // --- LIMPIEZA Y TRANSFORMACIÓN DE DATOS ---
-
-                // 1. Fecha principal (DD/MM/YYYY a YYYY-MM-DD)
                 if (!empty($data['date'])) {
                     $cleanDate = str_replace('/', '-', trim($data['date']));
                     $timestamp = strtotime($cleanDate);
@@ -207,7 +169,6 @@ class VCDocumentController
                     }
                 }
 
-                // 2. Fecha de centralización (Forzar a null si viene vacía o inválida)
                 $centralizeRaw = trim($data['date_centralize'] ?? '');
                 if ($centralizeRaw === '' || $centralizeRaw === 'NULL' || $centralizeRaw === 'null') {
                     $data['date_centralize'] = null;
@@ -217,22 +178,19 @@ class VCDocumentController
                     if ($timestampCent) {
                         $data['date_centralize'] = date('Y-m-d', $timestampCent);
                     } else {
-                        $data['date_centralize'] = null; // Si tiene texto extraño, lo anulamos
+                        $data['date_centralize'] = null;
                     }
                 }
 
-                // 3. Limitar td_ref a 1 carácter si existe
                 if (!empty($data['td_ref'])) {
                     $data['td_ref'] = substr(trim($data['td_ref']), 0, 1);
                 }
 
-                // 4. Limpiar otros campos opcionales vacíos
                 foreach (['rut_ref', 'folio_ref', 'net', 'exempt', 'vat_rec', 'vat_no_rec', 'plus_oth_tax', 'minus_oth_tax'] as $field) {
                     if (isset($data[$field]) && trim($data[$field]) === '') {
                         $data[$field] = null;
                     }
                 }
-                // ------------------------------------------
 
                 $validator = Validator::make($data, [
                     'month_register'       => 'required|integer|min:1|max:12',
