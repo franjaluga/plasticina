@@ -14,12 +14,16 @@
         <p class="text-gray-600 mb-6">Gestión de registros de ventas y compras</p>
 
         <div class="space-y-4">
-            <!-- Botón principal para ir al formulario -->
             <a href="{{ route('vc_documents.create') }}" class="block w-full bg-indigo-600 text-white font-medium py-3 px-4 rounded-md shadow hover:bg-indigo-700 transition">
                 Ingresar Nuevo Documento V/C
             </a>
         </div>
-
+        <br>
+        <div class="space-y-4">
+            <a href="{{ route('vc_documents.upload') }}" class="block w-full bg-indigo-600 text-white font-medium py-3 px-4 rounded-md shadow hover:bg-indigo-700 transition">
+                Ingresar vía importador
+            </a>
+        </div>
         <div class="mt-8 pt-4 border-t border-gray-200 text-xs text-gray-500">
             <p>Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})</p>
         </div>
