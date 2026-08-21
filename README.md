@@ -16,7 +16,7 @@ compruebe la versión
 
 1.2 - Crear la base de datos en su gestor de base de datos
 
-```CREATE NEW DATABASE plasticina;```
+```CREATE DATABASE plasticina CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;```
 
 1.3 - Configuración del .env y credenciales
 Copie el .env.example en un nuevo archivo llamado .env y configure las credenciales (edite el ```change_me``` por un usuario y clave propios)

@@ -201,13 +201,16 @@ class VCDocumentController
             }
 
             DB::commit();
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            if (is_resource($handle)) {
-                fclose($handle);
-            }
-            return back()->withErrors(['csv_file' => 'Error al procesar CSV: '.$e->getMessage()]);
-        } finally {
+            } catch (\Throwable $e) {
+                DB::rollBack();
+                if (is_resource($handle)) {
+                    fclose($handle);
+                }
+                
+                dd($e->getMessage(), $e->getLine(), $e->getFile());
+
+                return back()->withErrors(['csv_file' => 'Error al procesar CSV: '.$e->getMessage()]);
+            } finally {
             if (is_resource($handle)) {
                 fclose($handle);
             }
