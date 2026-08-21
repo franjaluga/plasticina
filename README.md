@@ -22,7 +22,7 @@ compruebe la versión
 Copie el .env.example en un nuevo archivo llamado .env y configure las credenciales (edite el ```change_me``` por un usuario y clave propios)
 
 ```
-DB_CONNECTION=mysql
+DB_CONNECTION=mariadb
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=plasticina
