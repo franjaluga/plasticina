@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\VCDocuments;
 
-use App\Models\Masters\Entity;
-use App\Models\Masters\DocumentType;
-use App\Models\VCDocuments\VCDocument;
+use App\Http\Controllers\Controller;
+use App\Services\VCDocumentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -12,15 +11,21 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class VCDocumentController
 {
+    protected $vcService;
+
+    public function __construct(VCDocumentService $vcService)
+    {
+        $vcService = $vcService;
+    }
 
     public function create()
     {
         return view('vc_documents.create');
     }
 
-    public function checkEntity($rut)
+    public function checkEntity($rut, VCDocumentService $service)
     {
-        $entity = Entity::where('rut', $rut)->first();
+        $entity = $service->getEntityByRut($rut);
 
         return response()->json([
             'exists' => !!$entity,
@@ -28,9 +33,9 @@ class VCDocumentController
         ]);
     }
 
-    public function checkDocumentType($doctype)
+    public function checkDocumentType($doctype, VCDocumentService $service)
     {
-        $docType = DocumentType::where('doctype', $doctype)->first();
+        $docType = $service->getDocumentTypeByDoctype($doctype);
 
         return response()->json([
             'exists' => !!$docType,
@@ -38,46 +43,7 @@ class VCDocumentController
         ]);
     }
 
-    private function persistDocument(array $validated): VCDocument
-    {
-
-        $entity = Entity::firstOrCreate(
-            ['rut' => $validated['rut']],
-            ['name' => $validated['entity_name']]
-        );
-
-        $documentType = DocumentType::firstOrCreate(
-            ['doctype' => $validated['doctype']],
-            ['name' => $validated['document_type_name']]
-        );
-
-        $exists = VCDocument::where('entity_id', $entity->id)
-                            ->where('document_type_id', $documentType->id)
-                            ->where('folio', $validated['folio'])
-                            ->exists();
-
-        if ($exists) {
-            throw new \Exception(
-                'El documento con este RUT, Tipo de Documento y Folio ya se encuentra registrado.'
-            );
-        }
-
-        $validated = array_merge($validated, [
-            'entity_id'         => $entity->id,
-            'document_type_id'  => $documentType->id,
-        ]);
-
-        unset(
-            $validated['rut'],
-            $validated['entity_name'],
-            $validated['doctype'],
-            $validated['document_type_name']
-        );
-
-        return VCDocument::create($validated);
-    }
-
-    public function store(Request $request)
+    public function store(Request $request, VCDocumentService $service)
     {
         $validated = $request->validate([
             'month_register'       => 'required|integer|min:1|max:12',
@@ -103,7 +69,7 @@ class VCDocumentController
         ]);
 
         try {
-            $this->persistDocument($validated);
+            $service->persistDocument($validated);
 
             return redirect()
                     ->route('vc_documents.create')
@@ -115,7 +81,7 @@ class VCDocumentController
         }
     }
 
-    public function csvImport(Request $request)
+    public function csvImport(Request $request, VCDocumentService $service)
     {
         set_time_limit(300);
         ini_set('memory_limit', '512M');
@@ -141,6 +107,7 @@ class VCDocumentController
             $headers = null;
             $rowNumber = 0;
             $errorsFound = [];
+            $rowsProcessed = 0;
 
             while (($row = fgetcsv($handle)) !== false) {
                 $rowNumber++;
@@ -160,7 +127,7 @@ class VCDocumentController
                 }
 
                 $data = array_combine($headers, $row);
-
+                
                 if (!empty($data['date'])) {
                     $cleanDate = str_replace('/', '-', trim($data['date']));
                     $timestamp = strtotime($cleanDate);
@@ -170,16 +137,12 @@ class VCDocumentController
                 }
 
                 $centralizeRaw = trim($data['date_centralize'] ?? '');
-                if ($centralizeRaw === '' || $centralizeRaw === 'NULL' || $centralizeRaw === 'null') {
+                if ($centralizeRaw === '' || strtolower($centralizeRaw) === 'null') {
                     $data['date_centralize'] = null;
                 } else {
                     $cleanCentDate = str_replace('/', '-', $centralizeRaw);
                     $timestampCent = strtotime($cleanCentDate);
-                    if ($timestampCent) {
-                        $data['date_centralize'] = date('Y-m-d', $timestampCent);
-                    } else {
-                        $data['date_centralize'] = null;
-                    }
+                    $data['date_centralize'] = $timestampCent ? date('Y-m-d', $timestampCent) : null;
                 }
 
                 if (!empty($data['td_ref'])) {
@@ -221,15 +184,20 @@ class VCDocumentController
                     continue; 
                 }
 
-                $this->persistDocument($validator->validated());
+                $service->persistDocument($validator->validated());
+                $rowsProcessed++;
             }
 
             if (!empty($errorsFound)) {
                 DB::rollBack();
-                if (is_resource($handle)) {
-                    fclose($handle);
-                }
+                fclose($handle);
                 return back()->withErrors(['csv_file' => 'Errores en el CSV: ' . implode(' | ', $errorsFound)]);
+            }
+
+            if ($rowsProcessed === 0) {
+                DB::rollBack();
+                fclose($handle);
+                return back()->withErrors(['csv_file' => 'El archivo CSV no contiene filas de datos para procesar (solo los encabezados).']);
             }
 
             DB::commit();
@@ -238,7 +206,6 @@ class VCDocumentController
             if (is_resource($handle)) {
                 fclose($handle);
             }
-
             return back()->withErrors(['csv_file' => 'Error al procesar CSV: '.$e->getMessage()]);
         } finally {
             if (is_resource($handle)) {
@@ -248,6 +215,6 @@ class VCDocumentController
 
         return redirect()
                 ->route('vc_documents.create')
-                ->with('success', 'CSV importado correctamente.');
+                ->with('success', "¡CSV importado correctamente! Se ingresaron {$rowsProcessed} documentos.");
     }
 }
