@@ -25,7 +25,7 @@
             </a>
         </div>
         <div class="mt-8 pt-4 border-t border-gray-200 text-xs text-gray-500">
-            <p>Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})</p>
+            <p>Sistema en proceso de desarrollo</p>
         </div>
     </div>
 
