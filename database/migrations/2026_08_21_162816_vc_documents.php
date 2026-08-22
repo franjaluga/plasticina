@@ -16,14 +16,18 @@ return new class extends Migration
             $table->char('type_vc');
 
             $table->foreignId('entity_id')->constrained('entities')->onDelete('restrict');
-            $table->foreignId('document_type_id')->constrained('document_types')->onDelete('restrict');
+            $table->unsignedSmallInteger('document_type_id');
+            $table->foreign('document_type_id')
+                ->references('doctype')
+                ->on('document_types')
+                ->onDelete('restrict');
             
             $table->integer('folio');
             $table->date('date');
 
             $table->string('rut_ref', 10);
             $table->integer('folio_ref');
-            $table->char('td_ref');
+            $table->unsignedSmallInteger('td_ref');
             $table->date('date_centralize');
 
             $table->bigInteger('net')->default(0);

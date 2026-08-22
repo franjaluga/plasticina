@@ -26,7 +26,7 @@ class VCDocumentService
             'date'                 => 'required|date',
             'rut_ref'              => 'nullable|string|max:10',
             'folio_ref'            => 'nullable|integer',
-            'td_ref'               => 'nullable|string|max:1',
+            'td_ref'               => 'nullable|integer|min:0|max:99',
             'date_centralize'      => 'nullable|date',
             'net'                  => 'nullable|integer',
             'exempt'               => 'nullable|integer',
@@ -73,7 +73,7 @@ class VCDocumentService
 
         $validated = array_merge($validated, [
             'entity_id'         => $entity->id,
-            'document_type_id'  => $documentType->id,
+            'document_type_id'  => $documentType->doctype,
         ]);
 
         unset(
@@ -179,7 +179,7 @@ class VCDocumentService
         }
 
         if (!empty($data['td_ref'])) {
-            $data['td_ref'] = substr(trim($data['td_ref']), 0, 1);
+            $data['td_ref'] = substr(trim($data['td_ref']), 0, 2);
         }
 
         foreach (['rut_ref', 'folio_ref', 'net', 'exempt', 'vat_rec', 'vat_no_rec', 'plus_oth_tax', 'minus_oth_tax'] as $field) {
