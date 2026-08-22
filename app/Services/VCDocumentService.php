@@ -58,6 +58,17 @@ class VCDocumentService
 
     public function persistDocument(array $validated): VCDocument
     {
+        // Validar que la fecha de centralización (date_centralize) pertenezca al año de trabajo activo
+        $workingYear = (int) session('working_year', date('Y'));
+
+        if (!empty($validated['date_centralize'])) {
+            $centralizeYear = (int) date('Y', strtotime($validated['date_centralize']));
+
+            if ($centralizeYear !== $workingYear) {
+                throw new Exception("El documento no se puede ingresar: la fecha de centralización corresponde al año {$centralizeYear}, pero el año de trabajo activo es {$workingYear}.");
+            }
+        }
+
         // Validar la regla matemática del documento
         if (!$this->isDocumentBalanced($validated)) {
             throw new Exception('El documento no está cuadrado: los componentes no suman el total indicado.');
@@ -209,7 +220,6 @@ class VCDocumentService
 
     private function isDocumentBalanced(array $data): bool
     {
-        // Obtenemos los valores considerando 0 si vienen nulos
         $net = (int) ($data['net'] ?? 0);
         $exempt = (int) ($data['exempt'] ?? 0);
         $vatRec = (int) ($data['vat_rec'] ?? 0);
@@ -218,7 +228,6 @@ class VCDocumentService
         $minusOthTax = (int) ($data['minus_oth_tax'] ?? 0);
         $total = (int) ($data['total'] ?? 0);
 
-        // net + exempt + vat_rec + vat_no_rec + plus_oth_tax - minus_oth_tax = total
         $calculatedTotal = $net + $exempt + $vatRec + $vatNoRec + $plusOthTax - $minusOthTax;
 
         return $calculatedTotal === $total;
