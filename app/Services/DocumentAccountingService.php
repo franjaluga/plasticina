@@ -79,11 +79,10 @@ class DocumentAccountingService
         $activeOwner = app(OwnerService::class)->getActiveOwner();
 
         return Journal::with(['entries.account', 'document'])
-            ->whereHas('document', function ($query) use ($year, $activeOwner) {
-                $query->where('year_register', $year)
-                      ->where('owner_id', $activeOwner?->id);
-            })
+            ->where('owner_id', $activeOwner?->id)
+            ->where('year', $year)
             ->orderBy('date', 'desc')
+            ->orderBy('entry_number', 'desc')
             ->get();
     }
 

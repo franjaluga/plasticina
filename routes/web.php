@@ -9,6 +9,7 @@ use App\Http\Controllers\Accounting\AccountingReportController;
 use App\Http\Controllers\Accounting\RetrievalDocumentController;
 use App\Http\Controllers\Accounting\DocumentQueryController;
 use App\Http\Controllers\Accounting\LedgerController;
+use App\Http\Controllers\Accounting\ManualJournalController;
 
 Route::get('/', function (OwnerService $ownerService) {
     $activeOwner = $ownerService->getActiveOwner();
@@ -88,3 +89,10 @@ Route::get('/accounting/documents/{id}', [RetrievalDocumentController::class, 's
 // MAYOR
 Route::get('/accounting/ledger', [LedgerController::class, 'index'])
     ->name('accounting.ledger');
+
+// MANUAL JOURNAL
+Route::get('/accounting/manual-journals/create', [ManualJournalController::class, 'create'])
+    ->name('accounting.manual_journals.create');
+
+Route::post('/accounting/manual-journals', [ManualJournalController::class, 'store'])
+    ->name('accounting.manual_journals.store');

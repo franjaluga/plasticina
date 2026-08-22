@@ -9,7 +9,7 @@
 </head>
 <body class="font-sans antialiased bg-slate-50 text-slate-900 flex items-center justify-center min-h-screen p-4">
 
-    <div class="max-w-5xl w-full mx-auto p-8 bg-white shadow-xl rounded-2xl border border-slate-100">
+    <div class="max-w-6xl w-full mx-auto p-8 bg-white shadow-xl rounded-2xl border border-slate-100">
         
         <!-- Contenedor superior: Owner Activo y Selector de Año -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
@@ -84,8 +84,8 @@
             <p class="text-sm text-slate-500 mt-1">Selecciona una categoría para comenzar a gestionar la contabilidad</p>
         </div>
 
-        <!-- Grilla 1x3 (3 columnas en paralelo) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Grilla de 4 columnas para los módulos principales -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
             <!-- Bloque 1: Registros Manuales -->
             <a href="{{ route('vc_documents.create') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-indigo-500 hover:shadow-lg transition text-left flex flex-col justify-between">
@@ -93,8 +93,8 @@
                     <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     </div>
-                    <h2 class="font-bold text-slate-800 group-hover:text-indigo-600 transition text-base mb-1">1. Registros Manuales</h2>
-                    <p class="text-xs text-slate-500 leading-relaxed">Registra de forma individual y detallada tus compras o ventas.</p>
+                    <h2 class="font-bold text-slate-800 group-hover:text-indigo-600 transition text-base mb-1">1. Registros V/C</h2>
+                    <p class="text-xs text-slate-500 leading-relaxed">Registra de forma individual tus compras o ventas.</p>
                 </div>
                 <span class="text-xs font-semibold text-indigo-600 mt-6 flex items-center">
                     Ingresar &rarr;
@@ -108,21 +108,35 @@
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                     </div>
                     <h2 class="font-bold text-slate-800 group-hover:text-indigo-600 transition text-base mb-1">2. Importadores</h2>
-                    <p class="text-xs text-slate-500 leading-relaxed">Realiza la carga masiva de múltiples documentos mediante archivos.</p>
+                    <p class="text-xs text-slate-500 leading-relaxed">Carga masiva de documentos mediante archivos.</p>
                 </div>
                 <span class="text-xs font-semibold text-indigo-600 mt-6 flex items-center">
                     Cargar &rarr;
                 </span>
             </a>
 
-            <!-- Bloque 3: Reportes Contables -->
+            <!-- Bloque 3: Asiento Manual Directo -->
+            <a href="{{ route('accounting.manual_journals.create') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-amber-500 hover:shadow-lg transition text-left flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4 group-hover:bg-amber-600 group-hover:text-white transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    </div>
+                    <h2 class="font-bold text-slate-800 group-hover:text-amber-600 transition text-base mb-1">3. Asiento Manual</h2>
+                    <p class="text-xs text-slate-500 leading-relaxed">Crea comprobantes contables directos sin documentos.</p>
+                </div>
+                <span class="text-xs font-semibold text-amber-600 mt-6 flex items-center">
+                    Crear &rarr;
+                </span>
+            </a>
+
+            <!-- Bloque 4: Reportes Contables -->
             <a href="{{ route('accounting.reports.index') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-emerald-500 hover:shadow-lg transition text-left flex flex-col justify-between">
                 <div>
                     <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 group-hover:bg-emerald-600 group-hover:text-white transition">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </div>
-                    <h2 class="font-bold text-slate-800 group-hover:text-emerald-600 transition text-base mb-1">3. Reportes Contables</h2>
-                    <p class="text-xs text-slate-500 leading-relaxed">Consulta el libro diario, balance tributario de 8 columnas y más.</p>
+                    <h2 class="font-bold text-slate-800 group-hover:text-emerald-600 transition text-base mb-1">4. Reportes</h2>
+                    <p class="text-xs text-slate-500 leading-relaxed">Consulta libro diario, mayor, balance de 8 columnas y más.</p>
                 </div>
                 <span class="text-xs font-semibold text-emerald-600 mt-6 flex items-center">
                     Ver reportes &rarr;

@@ -12,15 +12,14 @@ class LedgerService
         $activeOwner = app(OwnerService::class)->getActiveOwner();
 
         return Journal::with(['entries.account', 'document.entity'])
-            ->whereMonth('date', $month)
+            ->where('owner_id', $activeOwner?->id)
             ->whereYear('date', $year)
-            ->whereHas('document', function ($query) use ($activeOwner) {
-                $query->where('owner_id', $activeOwner?->id);
-            })
+            ->whereMonth('date', $month)
             ->whereHas('entries', function ($query) use ($accountCode) {
                 $query->where('account_code', trim($accountCode));
             })
             ->orderBy('date', 'asc')
+            ->orderBy('entry_number', 'asc')
             ->get();
     }
 }

@@ -24,10 +24,11 @@ return new class extends Migration
             $table->integer('folio');
             $table->date('date');
 
-            $table->string('rut_ref', 10);
-            $table->integer('folio_ref');
-            $table->unsignedSmallInteger('td_ref');
-            $table->date('date_centralize');
+            // Hechos nullable para que no exijan datos si no aplican
+            $table->string('rut_ref', 10)->nullable();
+            $table->integer('folio_ref')->nullable();
+            $table->unsignedSmallInteger('td_ref')->nullable();
+            $table->date('date_centralize')->nullable();
 
             $table->bigInteger('net')->default(0);
             $table->bigInteger('exempt')->default(0);
