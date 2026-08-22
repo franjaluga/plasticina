@@ -10,6 +10,9 @@ use App\Http\Controllers\Accounting\RetrievalDocumentController;
 use App\Http\Controllers\Accounting\DocumentQueryController;
 use App\Http\Controllers\Accounting\LedgerController;
 use App\Http\Controllers\Accounting\ManualJournalController;
+use App\Http\Controllers\Accounting\AuditController;
+use App\Http\Controllers\Accounting\PaymentController;
+
 
 Route::get('/', function (OwnerService $ownerService) {
     $activeOwner = $ownerService->getActiveOwner();
@@ -96,3 +99,13 @@ Route::get('/accounting/manual-journals/create', [ManualJournalController::class
 
 Route::post('/accounting/manual-journals', [ManualJournalController::class, 'store'])
     ->name('accounting.manual_journals.store');
+
+// AUDITORIA
+Route::get('/accounting/reports/audit', [AuditController::class, 'index'])->name('accounting.reports.audit');
+
+// BORRADO
+Route::delete('/accounting/journals/{journal}', [AuditController::class, 'destroy'])->name('accounting.journals.destroy');
+
+// COBROS Y PAGOS
+Route::get('/accounting/payments', [PaymentController::class, 'index'])->name('accounting.payments.index');
+Route::post('/accounting/payments', [PaymentController::class, 'store'])->name('accounting.payments.store');

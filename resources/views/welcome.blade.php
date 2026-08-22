@@ -145,6 +145,42 @@
 
         </div>
 
+        <!-- Fila Siguiente: Bloque 5 - Auditoría de Documentos -->
+        <div class="mt-6">
+            <a href="{{ route('accounting.reports.audit') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-sky-500 hover:shadow-lg transition text-left flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center group-hover:bg-sky-600 group-hover:text-white transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012-2m-6 9l2 2 4-4"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-slate-800 group-hover:text-sky-600 transition text-base mb-0.5">5. Auditoría de Documentos</h2>
+                        <p class="text-xs text-slate-500">Revisa los asientos contables y sus referencias asociadas (folio y RUT del documento).</p>
+                    </div>
+                </div>
+                <span class="text-xs font-semibold text-sky-600 flex items-center whitespace-nowrap ml-4">
+                    Auditar &rarr;
+                </span>
+            </a>
+        </div>
+
+        <!-- Fila Siguiente: Bloque 6 - Gestión de Cobros y Pagos -->
+        <div class="mt-4">
+            <a href="{{ route('accounting.payments.index') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-purple-500 hover:shadow-lg transition text-left flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-slate-800 group-hover:text-purple-600 transition text-base mb-0.5">6. Cobros y Pagos de Documentos</h2>
+                        <p class="text-xs text-slate-500">Gestiona saldos pendientes de compras y ventas aplicando pagos o cobros mediante cuentas de banco.</p>
+                    </div>
+                </div>
+                <span class="text-xs font-semibold text-purple-600 flex items-center whitespace-nowrap ml-4">
+                    Gestionar &rarr;
+                </span>
+            </a>
+        </div>
+
         <!-- Footer -->
         <div class="mt-8 pt-4 border-t border-slate-200 text-xs text-slate-400 flex justify-between items-center">
             <p>Sistema Contable v1.0</p>
