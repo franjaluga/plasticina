@@ -102,9 +102,11 @@ class VCDocumentController extends Controller
 
     public function journalBook(DocumentAccountingService $accountingService)
     {
-        $journals = $accountingService->getJournalBookRecords();
+        $year = session('working_year', date('Y'));
 
-        return view('vc_documents.journal_book', compact('journals'));
+        $journals = $accountingService->getJournalBookRecords((int) $year);
+
+        return view('vc_documents.journal_book', compact('journals', 'year'));
     }
 
     public function exportCsv(BooksToCsv $csvService): StreamedResponse

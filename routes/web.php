@@ -13,6 +13,14 @@ Route::get('/', function (OwnerService $ownerService) {
     return view('welcome', compact('activeOwner', 'pendingCount'));
 });
 
+// PERIODO CONTABLE
+Route::post('/period/update', function (\Illuminate\Http\Request $request) {
+    $request->validate(['working_year' => 'required|integer|min:2000']);
+    session(['working_year' => $request->working_year]);
+    return back()->with('success', 'Año de trabajo actualizado.');
+})->name('period.update');
+
+
 // OWNERS (EMPRESAS)
 Route::resource('owners', OwnerController::class)->except(['show', 'create', 'edit']);
 Route::patch('owners/{owner}/activate', [OwnerController::class, 'activate'])->name('owners.activate');

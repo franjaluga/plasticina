@@ -11,28 +11,51 @@
 
     <div class="max-w-2xl w-full mx-auto p-8 bg-white shadow-xl rounded-2xl border border-slate-100">
         
-        <!-- Indicador del Owner Activo -->
-        <div class="mb-6 p-4 bg-indigo-50/60 border border-indigo-100 rounded-xl flex items-center justify-between">
-            <div class="text-left flex items-center space-x-3">
-                <div class="p-2 bg-indigo-600 text-white rounded-lg">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+        <!-- Contenedor superior: Owner Activo y Selector de Año -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            
+            <!-- Indicador del Owner Activo (Ocupa 2 columnas) -->
+            <div class="sm:col-span-2 p-4 bg-indigo-50/60 border border-indigo-100 rounded-xl flex items-center justify-between">
+                <div class="text-left flex items-center space-x-3">
+                    <div class="p-2 bg-indigo-600 text-white rounded-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-indigo-600 block">Owner Activo</span>
+                        <span class="text-sm font-bold text-slate-800">
+                            @if($activeOwner)
+                                {{ $activeOwner->name }} <span class="text-slate-500 font-normal">({{ $activeOwner->rut }})</span>
+                            @else
+                                <span class="text-amber-600 font-medium">Ningún owner seleccionado</span>
+                            @endif
+                        </span>
+                    </div>
                 </div>
                 <div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-indigo-600 block">Owner Activo</span>
-                    <span class="text-sm font-bold text-slate-800">
-                        @if($activeOwner)
-                            {{ $activeOwner->name }} <span class="text-slate-500 font-normal">({{ $activeOwner->rut }})</span>
-                        @else
-                            <span class="text-amber-600 font-medium">Ningún owner seleccionado</span>
-                        @endif
-                    </span>
+                    <a href="{{ route('owners.index') }}" class="text-xs font-medium bg-white text-indigo-600 border border-indigo-200 px-3 py-2 rounded-lg hover:bg-indigo-50 transition shadow-sm">
+                        Cambiar
+                    </a>
                 </div>
             </div>
-            <div>
-                <a href="{{ route('owners.index') }}" class="text-xs font-medium bg-white text-indigo-600 border border-indigo-200 px-3 py-2 rounded-lg hover:bg-indigo-50 transition shadow-sm">
-                    Cambiar
-                </a>
+
+            <!-- Selector de Año de Trabajo (Ocupa 1 columna) -->
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-col justify-between">
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 block mb-1">Año de Trabajo</span>
+                <form action="{{ route('period.update') }}" method="POST" class="flex items-center space-x-2">
+                    @csrf
+                    <select name="working_year" onchange="this.form.submit()" class="w-full text-sm font-bold text-slate-800 bg-white border border-slate-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer shadow-sm">
+                        @php
+                            $currentYearSelected = session('working_year', date('Y'));
+                        @endphp
+                        @for($y = date('Y'); $y >= 2020; $y--)
+                            <option value="{{ $y }}" {{ $currentYearSelected == $y ? 'selected' : '' }}>
+                                {{ $y }}
+                            </option>
+                        @endfor
+                    </select>
+                </form>
             </div>
+
         </div>
 
         <!-- Alerta de Documentos Pendientes (Solo aparece si hay pendientes) -->
@@ -44,7 +67,7 @@
                     </div>
                     <div>
                         <span class="font-bold block">¡Atención!</span>
-                        Tienes <span class="font-extrabold">{{ $pendingCount }}</span> documento(s) sin contabilizar.
+                        Tienes <span class="font-extrabold">{{ $pendingCount }}</span> documento(s) sin contabilizar en este periodo.
                     </div>
                 </div>
                 <div>
