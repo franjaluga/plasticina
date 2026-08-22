@@ -39,7 +39,10 @@ Inicie una migración limpia para cargar las tablas en la base de datos
 
 ```php artisan key:generate```
 
-1.6 - Inicie el programa  
+1.6 -  Ejecute el Seeder de la base de datos para poblar datos por defecto
+```php artisan db:seed```
+
+1.7 - Inicie el programa  
 ```php artisan serve```   
 ```npm run dev``` 
 
