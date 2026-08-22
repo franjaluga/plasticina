@@ -8,7 +8,7 @@ use App\Models\VCDocuments\VCDocument;
 use App\Http\Controllers\Accounting\AccountingReportController;
 use App\Http\Controllers\Accounting\RetrievalDocumentController;
 use App\Http\Controllers\Accounting\DocumentQueryController;
-
+use App\Http\Controllers\Accounting\LedgerController;
 
 Route::get('/', function (OwnerService $ownerService) {
     $activeOwner = $ownerService->getActiveOwner();
@@ -84,3 +84,7 @@ Route::get('/accounting/documents/query', [DocumentQueryController::class, 'inde
 // RECUPERAR DOCUMENTO
 Route::get('/accounting/documents/{id}', [RetrievalDocumentController::class, 'show'])
     ->name('accounting.documents.detail');
+
+// MAYOR
+Route::get('/accounting/ledger', [LedgerController::class, 'index'])
+    ->name('accounting.ledger');

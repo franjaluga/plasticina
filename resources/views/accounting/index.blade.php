@@ -99,6 +99,47 @@
                 </form>
             </div>
 
+            <!-- NUEVA TARJETA: Libro Mayor -->
+            <div class="md:col-span-2 p-5 bg-slate-50 border border-slate-200 rounded-xl">
+                <div class="flex items-center mb-3">
+                    <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center mr-3">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-slate-800 text-base">Libro Mayor por Cuenta</h2>
+                        <p class="text-xs text-slate-500">Consulta los movimientos detallados y saldo de una cuenta contable específica.</p>
+                    </div>
+                </div>
+
+                <!-- Formulario Libro Mayor -->
+                <form action="{{ route('accounting.ledger') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-4">
+                    <div>
+                        <label for="account_code" class="block text-xs font-semibold text-slate-600 mb-1">N° de Cuenta</label>
+                        <input type="text" name="account_code" id="account_code" placeholder="Ej: 110101" value="{{ request('account_code') }}" class="w-full text-xs rounded-lg border-slate-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 p-2 bg-white border" required>
+                    </div>
+                    <div>
+                        <label for="ledger_month" class="block text-xs font-semibold text-slate-600 mb-1">Mes</label>
+                        <select name="month" id="ledger_month" class="w-full text-xs rounded-lg border-slate-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 p-2 bg-white border" required>
+                            @for($m = 1; $m <= 12; $m++)
+                                <option value="{{ $m }}" {{ (request('month', date('n')) == $m) ? 'selected' : '' }}>
+                                    {{ $m }} - {{ ucfirst(\Carbon\Carbon::create()->month($m)->translatedFormat('F')) }}
+                                </option>
+                            @endfor
+                        </select>
+                    </div>
+                    <div>
+                        <label for="ledger_year" class="block text-xs font-semibold text-slate-600 mb-1">Año</label>
+                        <input type="number" name="year" id="ledger_year" value="{{ session('working_year', date('Y')) }}" class="w-full text-xs rounded-lg border-slate-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 p-2 bg-white border" required>
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs py-2.5 px-4 rounded-lg shadow-sm transition flex items-center justify-center">
+                            Generar Mayor &rarr;
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            
         </div>
 
     </div>
