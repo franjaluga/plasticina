@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Documentos Pendientes de Contabilizar</title>
-    <!-- Puedes usar Bootstrap o Tailwind según tu proyecto -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="container py-5">
@@ -36,8 +35,28 @@
     <form action="{{ route('vc_documents.batch_contabilizar') }}" method="POST">
         @csrf
 
-        <div class="mb-3">
-            <button type="submit" class="btn btn-primary">Contabilizar Seleccionados</button>
+        <!-- Selector / Input ComboBox dinámico para la Cuenta del Neto -->
+        <div class="card p-3 mb-4 bg-light border-0 shadow-sm">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <label for="custom_net_account" class="form-label fw-bold text-secondary mb-1">
+                        Cuenta Contable para el Neto <small class="text-muted">(Seleccione o escriba el código)</small>
+                    </label>
+                    <div class="input-group">
+                        <input type="text" name="custom_net_account" id="custom_net_account" class="form-control" list="accounts_list" placeholder="Ej: Seleccione o escriba código" autocomplete="off">
+                        
+                        <!-- Datalist poblado dinámicamente desde el modelo Account -->
+                        <datalist id="accounts_list">
+                            @foreach($accounts as $acc)
+                                <option value="{{ $acc->code }}">{{ $acc->code }} - {{ $acc->name }}</option>
+                            @endforeach
+                        </datalist>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                    <button type="submit" class="btn btn-primary px-4 py-2 fw-bold">Contabilizar Seleccionados</button>
+                </div>
+            </div>
         </div>
 
         <table class="table table-bordered table-striped align-middle">
@@ -58,7 +77,6 @@
                 @forelse($documents as $doc)
                     <tr>
                         <td class="text-center">
-                            {{-- El value DEBE ser el id del documento para que el batchProcess funcione correctamente --}}
                             <input type="checkbox" name="document_ids[]" value="{{ $doc->id }}" class="form-check-input doc-checkbox">
                         </td>
                         <td class="fw-bold">{{ $doc->folio }}</td>
@@ -81,7 +99,6 @@
         </table>
     </form>
 
-    <!-- Script básico para seleccionar/deseleccionar todos -->
     <script>
         document.getElementById('select-all').addEventListener('change', function() {
             let checkboxes = document.querySelectorAll('.doc-checkbox');

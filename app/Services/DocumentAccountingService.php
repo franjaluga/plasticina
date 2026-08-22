@@ -17,7 +17,7 @@ class DocumentAccountingService
         $this->journalService = $journalService;
     }
 
-    public function batchProcess(array $documentIds): array
+    public function batchProcess(array $documentIds, ?string $customNetAccount = null): array
     {
         $successCount = 0;
         $errorMessages = [];
@@ -31,8 +31,8 @@ class DocumentAccountingService
             }
 
             try {
-                // Nombre corregido para que coincida con el método de abajo
-                $accountMapping = $this->getAccountMapping($document);
+                // Pasamos la cuenta personalizada al mapeador
+                $accountMapping = $this->getAccountMapping($document, $customNetAccount);
 
                 $this->journalService->registerDocumentJournal($document, $accountMapping);
                 $successCount++;
@@ -50,15 +50,16 @@ class DocumentAccountingService
     /**
      * Define el mapeo de cuentas contables dependiendo si es Compra (C) o Venta (V).
      */
-    protected function getAccountMapping(VCDocument $document): array
+    protected function getAccountMapping(VCDocument $document, ?string $customNetAccount = null): array
     {
-        // Limpiamos espacios y pasamos a mayúsculas
         $tipo = strtoupper(trim($document->type_vc ?? 'C')); 
 
-        // Si es Venta (puedes ajustar si en tu BD se guarda diferente, ej: 'VENTA')
+        // Si el usuario ingresó una cuenta personalizada, la usamos para el 'net', de lo contrario usamos la por defecto
+        $netAccountCode = !empty($customNetAccount) ? $customNetAccount : ($tipo === 'V' || $tipo === 'VENTA' ? '410101' : '110101');
+
         if ($tipo === 'V' || $tipo === 'VENTA') {
             return [
-                'net'     => ['account_code' => '410101', 'type' => 'credit'], // Ventas (Haber)
+                'net'     => ['account_code' => $netAccountCode, 'type' => 'credit'], // Ventas (Haber)
                 'vat_rec' => ['account_code' => '210201', 'type' => 'credit'], // IVA Débito (Haber)
                 'total'   => ['account_code' => '110102', 'type' => 'debit'],  // Clientes (Debe)
             ];
@@ -66,7 +67,7 @@ class DocumentAccountingService
 
         // Por defecto Compras ('C')
         return [
-            'net'     => ['account_code' => '110101', 'type' => 'debit'],  // Compras (Debe)
+            'net'     => ['account_code' => $netAccountCode, 'type' => 'debit'],  // Compras (Debe)
             'vat_rec' => ['account_code' => '110201', 'type' => 'debit'],  // IVA Crédito (Debe)
             'total'   => ['account_code' => '210101', 'type' => 'credit'], // Proveedores (Haber)
         ];

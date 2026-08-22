@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Services\DocumentAccountingService;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Services\BooksToCsv;
+use App\Models\Accounts\Account;
 
 class VCDocumentController extends Controller
 {
@@ -78,26 +79,25 @@ class VCDocumentController extends Controller
     public function pendingList(DocumentAccountingService $accountingService)
     {
         $documents = $accountingService->getPendingDocuments();
+        
+        $accounts = Account::orderBy('code')->get();
 
-        return view('vc_documents.pending', compact('documents'));
+        return view('vc_documents.pending', compact('documents', 'accounts'));
     }
 
     public function batchContabilizar(Request $request, DocumentAccountingService $accountingService)
     {
         $request->validate([
-            'document_ids'   => 'required|array',
-            'document_ids.*' => 'exists:vc_documents,id',
+            'document_ids' => 'required|array',
+            'custom_net_account' => 'nullable|string|max:20',
         ]);
 
-        $result = $accountingService->batchProcess($request->input('document_ids'));
+        $documentIds = $request->input('document_ids');
+        $customNetAccount = $request->input('custom_net_account');
 
-        $redirect = back()->with('success', "Se contabilizaron exitosamente {$result['success_count']} documentos.");
+        $result = $accountingService->batchProcess($documentIds, $customNetAccount);
 
-        if (!empty($result['errors'])) {
-            $redirect->withErrors(['batch_errors' => implode(' | ', $result['errors'])]);
-        }
-
-        return $redirect;
+        return back()->with('success', "Se procesaron correctamente {$result['success_count']} documentos.");
     }
 
     public function journalBook(DocumentAccountingService $accountingService)
