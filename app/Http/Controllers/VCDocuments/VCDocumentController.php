@@ -5,19 +5,9 @@ namespace App\Http\Controllers\VCDocuments;
 use App\Http\Controllers\Controller;
 use App\Services\VCDocumentService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
-class VCDocumentController
+class VCDocumentController extends Controller
 {
-    protected $vcService;
-
-    public function __construct(VCDocumentService $vcService)
-    {
-        $vcService = $vcService;
-    }
-
     public function create()
     {
         return view('vc_documents.create');
@@ -28,7 +18,7 @@ class VCDocumentController
         $entity = $service->getEntityByRut($rut);
 
         return response()->json([
-            'exists' => !!$entity,
+            'exists' => (bool) $entity,
             'name'   => $entity->name ?? null,
         ]);
     }
@@ -38,7 +28,7 @@ class VCDocumentController
         $docType = $service->getDocumentTypeByDoctype($doctype);
 
         return response()->json([
-            'exists' => !!$docType,
+            'exists' => (bool) $docType,
             'name'   => $docType->name ?? null,
         ]);
     }
@@ -72,12 +62,12 @@ class VCDocumentController
             $service->persistDocument($validated);
 
             return redirect()
-                    ->route('vc_documents.create')
-                    ->with('success', 'Documento V/C guardado exitosamente.');
+                ->route('vc_documents.create')
+                ->with('success', 'Documento V/C guardado exitosamente.');
         } catch (\Exception $e) {
             return back()
-                   ->withInput()
-                   ->withErrors(['duplicate' => $e->getMessage()]);
+                ->withInput()
+                ->withErrors(['duplicate' => $e->getMessage()]);
         }
     }
 
@@ -90,134 +80,15 @@ class VCDocumentController
             'csv_file' => 'required|file|mimes:csv,txt',
         ]);
 
-        $uploadedFile = $request->file('csv_file');
-
-        if (! $uploadedFile || ! $uploadedFile->isValid()) {
-            return back()->withErrors(['csv_file' => 'Archivo inválido']);
-        }
-
-        $handle = fopen($uploadedFile->getRealPath(), 'r');
-        if ($handle === false) {
-            return back()->withErrors(['csv_file' => 'No se pudo abrir el archivo CSV.']);
-        }
-
-        DB::beginTransaction();
-
         try {
-            $headers = null;
-            $rowNumber = 0;
-            $errorsFound = [];
-            $rowsProcessed = 0;
+            $rowsProcessed = $service->importCsv($request->file('csv_file'));
 
-            while (($row = fgetcsv($handle)) !== false) {
-                $rowNumber++;
-
-                if ($headers === null) {
-                    $headers = $row;
-                    continue;
-                }
-
-                if (empty(array_filter($row))) {
-                    continue;
-                }
-
-                if (count($headers) !== count($row)) {
-                    $errorsFound[] = "Línea $rowNumber: Las columnas no coinciden con los encabezados.";
-                    continue;
-                }
-
-                $data = array_combine($headers, $row);
-                
-                if (!empty($data['date'])) {
-                    $cleanDate = str_replace('/', '-', trim($data['date']));
-                    $timestamp = strtotime($cleanDate);
-                    if ($timestamp) {
-                        $data['date'] = date('Y-m-d', $timestamp);
-                    }
-                }
-
-                $centralizeRaw = trim($data['date_centralize'] ?? '');
-                if ($centralizeRaw === '' || strtolower($centralizeRaw) === 'null') {
-                    $data['date_centralize'] = null;
-                } else {
-                    $cleanCentDate = str_replace('/', '-', $centralizeRaw);
-                    $timestampCent = strtotime($cleanCentDate);
-                    $data['date_centralize'] = $timestampCent ? date('Y-m-d', $timestampCent) : null;
-                }
-
-                if (!empty($data['td_ref'])) {
-                    $data['td_ref'] = substr(trim($data['td_ref']), 0, 1);
-                }
-
-                foreach (['rut_ref', 'folio_ref', 'net', 'exempt', 'vat_rec', 'vat_no_rec', 'plus_oth_tax', 'minus_oth_tax'] as $field) {
-                    if (isset($data[$field]) && trim($data[$field]) === '') {
-                        $data[$field] = null;
-                    }
-                }
-
-                $validator = Validator::make($data, [
-                    'month_register'       => 'required|integer|min:1|max:12',
-                    'year_register'        => 'required|integer|min:2000',
-                    'type_vc'              => 'required|string|max:1',
-                    'rut'                  => 'required|string|max:10',
-                    'entity_name'          => 'required|string|max:100',
-                    'doctype'              => 'required|integer',
-                    'document_type_name'   => 'required|string|max:50',
-                    'folio'                => 'required|integer',
-                    'date'                 => 'required|date',
-                    'rut_ref'              => 'nullable|string|max:10',
-                    'folio_ref'            => 'nullable|integer',
-                    'td_ref'               => 'nullable|string|max:1',
-                    'date_centralize'      => 'nullable|date',
-                    'net'                  => 'nullable|integer',
-                    'exempt'               => 'nullable|integer',
-                    'vat_rec'              => 'nullable|integer',
-                    'vat_no_rec'           => 'nullable|integer',
-                    'plus_oth_tax'         => 'nullable|integer',
-                    'minus_oth_tax'        => 'nullable|integer',
-                    'total'                => 'required|integer',
-                ]);
-
-                if ($validator->fails()) {
-                    $mensajes = implode(', ', $validator->errors()->all());
-                    $errorsFound[] = "Línea $rowNumber: " . $mensajes;
-                    continue; 
-                }
-
-                $service->persistDocument($validator->validated());
-                $rowsProcessed++;
-            }
-
-            if (!empty($errorsFound)) {
-                DB::rollBack();
-                fclose($handle);
-                return back()->withErrors(['csv_file' => 'Errores en el CSV: ' . implode(' | ', $errorsFound)]);
-            }
-
-            if ($rowsProcessed === 0) {
-                DB::rollBack();
-                fclose($handle);
-                return back()->withErrors(['csv_file' => 'El archivo CSV no contiene filas de datos para procesar (solo los encabezados).']);
-            }
-
-            DB::commit();
-            } catch (\Throwable $e) {
-                DB::rollBack();
-                if (is_resource($handle)) {
-                    fclose($handle);
-                }
-                
-                dd($e->getMessage(), $e->getLine(), $e->getFile());
-
-                return back()->withErrors(['csv_file' => 'Error al procesar CSV: '.$e->getMessage()]);
-            } finally {
-            if (is_resource($handle)) {
-                fclose($handle);
-            }
-        }
-
-        return redirect()
+            return redirect()
                 ->route('vc_documents.create')
                 ->with('success', "¡CSV importado correctamente! Se ingresaron {$rowsProcessed} documentos.");
+                
+        } catch (\Exception $e) {
+            return back()->withErrors(['csv_file' => $e->getMessage()]);
+        }
     }
 }
