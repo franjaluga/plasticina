@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Masters\Entity;
 use App\Models\Masters\DocumentType;
 use App\Models\VCDocuments\VCDocument;
-use App\Services\OwnerService; // <-- 1. Importar el servicio
+use App\Services\OwnerService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Exception;
@@ -14,7 +14,7 @@ use Throwable;
 class VCDocumentService
 {
     protected OwnerService $ownerService;
-    
+
     public function __construct(OwnerService $ownerService)
     {
         $this->ownerService = $ownerService;
