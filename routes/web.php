@@ -2,10 +2,17 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VCDocuments\VCDocumentController;
+use App\Http\Controllers\Owners\OwnerController;
+use App\Services\OwnerService;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', function (OwnerService $ownerService) {
+    $activeOwner = $ownerService->getActiveOwner();
+    return view('welcome', compact('activeOwner'));
 });
+
+// OWNERS (EMPRESAS)
+Route::resource('owners', OwnerController::class)->except(['show', 'create', 'edit']);
+Route::patch('owners/{owner}/activate', [OwnerController::class, 'activate'])->name('owners.activate');
 
 // VIA FORMULARIO
 Route::get('/vc-documents/create', [VCDocumentController::class, 'create'])->name('vc_documents.create');
@@ -23,3 +30,5 @@ Route::post('/vc_documents', [VCDocumentController::class, 'store'])
      
 Route::post('/vc_documents/csv', [VCDocumentController::class, 'csvImport'])
      ->name('vc_documents.csv');
+
+     

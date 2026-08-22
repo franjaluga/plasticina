@@ -10,6 +10,26 @@
 <body class="font-sans antialiased bg-gray-100 text-gray-900 flex items-center justify-center min-h-screen">
 
     <div class="max-w-xl w-full mx-auto p-6 bg-white shadow-md rounded-lg text-center">
+        
+        <!-- Indicador del Owner Activo (Arriba siempre) -->
+        <div class="mb-6 p-4 bg-indigo-50 border border-indigo-200 rounded-md flex items-center justify-between">
+            <div class="text-left">
+                <span class="text-xs font-semibold uppercase tracking-wider text-indigo-600 block">Owner Activo</span>
+                <span class="text-sm font-bold text-gray-800">
+                    @if($activeOwner)
+                        {{ $activeOwner->name }} <span class="text-gray-500 font-normal">({{ $activeOwner->rut }})</span>
+                    @else
+                        <span class="text-amber-600 font-medium">Ningún owner seleccionado</span>
+                    @endif
+                </span>
+            </div>
+            <div>
+                <a href="{{ route('owners.index') }}" class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700 transition">
+                    Cambiar
+                </a>
+            </div>
+        </div>
+
         <h1 class="text-2xl font-bold text-gray-800 mb-2">Sistema de Documentos V/C</h1>
         <p class="text-gray-600 mb-6">Gestión de registros de ventas y compras</p>
 
@@ -18,14 +38,16 @@
                 Ingresar Nuevo Documento V/C
             </a>
         </div>
-        <br>
-        <div class="space-y-4">
+        
+        <div class="space-y-4 mt-4">
             <a href="{{ route('vc_documents.upload') }}" class="block w-full bg-indigo-600 text-white font-medium py-3 px-4 rounded-md shadow hover:bg-indigo-700 transition">
                 Ingresar vía importador
             </a>
         </div>
-        <div class="mt-8 pt-4 border-t border-gray-200 text-xs text-gray-500">
+
+        <div class="mt-8 pt-4 border-t border-gray-200 text-xs text-gray-500 flex justify-between items-center">
             <p>Sistema en proceso de desarrollo</p>
+            <a href="{{ route('owners.index') }}" class="text-indigo-600 hover:underline">Gestionar Owners</a>
         </div>
     </div>
 
