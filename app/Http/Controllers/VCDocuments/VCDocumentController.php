@@ -4,10 +4,11 @@ namespace App\Http\Controllers\VCDocuments;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreVCDocumentRequest;
-use App\Models\VCDocuments\VCDocument; // Obligatorio importar el modelo
+use App\Models\VCDocuments\VCDocument;
 use App\Services\VCDocumentService;
-use App\Services\JournalService; // Importamos el servicio de contabilidad
+use App\Services\JournalService;
 use Illuminate\Http\Request;
+use App\Services\DocumentAccountingService;
 
 class VCDocumentController extends Controller
 {
@@ -79,37 +80,19 @@ class VCDocumentController extends Controller
         return view('vc_documents.pending', compact('documents'));
     }
 
-    public function batchContabilizar(Request $request, JournalService $journalService)
+    public function batchContabilizar(Request $request, DocumentAccountingService $accountingService)
     {
         $request->validate([
-            'document_ids' => 'required|array',
+            'document_ids'   => 'required|array',
             'document_ids.*' => 'exists:vc_documents,id',
         ]);
 
-        $successCount = 0;
-        $errorMessages = [];
+        $result = $accountingService->batchProcess($request->input('document_ids'));
 
-        $accountMapping = [
-            'net'     => ['account_code' => '110101', 'type' => 'debit'],
-            'vat_rec' => ['account_code' => '110201', 'type' => 'debit'],
-            'total'   => ['account_code' => '210101', 'type' => 'credit'],
-        ];
+        $redirect = back()->with('success', "Se contabilizaron exitosamente {$result['success_count']} documentos.");
 
-        foreach ($request->document_ids as $id) {
-            $document = VCDocument::find($id);
-            
-            try {
-                $journalService->registerDocumentJournal($document, $accountMapping);
-                $successCount++;
-            } catch (\Exception $e) {
-                $errorMessages[] = "Doc ID {$id}: " . $e->getMessage();
-            }
-        }
-
-        $redirect = back()->with('success', "Se contabilizaron exitosamente {$successCount} documentos.");
-
-        if (!empty($errorMessages)) {
-            $redirect->withErrors(['batch_errors' => implode(' | ', $errorMessages)]);
+        if (!empty($result['errors'])) {
+            $redirect->withErrors(['batch_errors' => implode(' | ', $result['errors'])]);
         }
 
         return $redirect;
