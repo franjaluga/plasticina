@@ -17,11 +17,28 @@ class JournalService
         }
 
         return DB::transaction(function () use ($document, $accountMapping) {
+            
+            $ownerId = $document->owner_id;
+            $year = $document->year_register;
+
+            if (!$ownerId) {
+                throw new Exception("El documento no tiene un Owner asociado, no se puede generar el asiento contable.");
+            }
+
+            // 2. Calcular el siguiente número correlativo de asiento para ESTE owner y ESTE año.
+            // Usamos lockForUpdate() para bloquear la lectura y evitar duplicados en procesos masivos/concurridos.
+            $lastEntryNumber = Journal::where('owner_id', $ownerId)
+                ->where('year', $year)
+                ->lockForUpdate()
+                ->max('entry_number');
+
+            $nextEntryNumber = ($lastEntryNumber ?? 0) + 1;
+
             $entriesData = [];
             $totalDebit = 0;
             $totalCredit = 0;
 
-            // 2. Componentes evaluables de la factura
+            // 3. Componentes evaluables de la factura
             $components = [
                 'net' => $document->net,
                 'exempt' => $document->exempt,
@@ -53,23 +70,26 @@ class JournalService
                 }
             }
 
-            // 3. Revisar cuadratura (Debe == Haber)
+            // 4. Revisar cuadratura (Debe == Haber)
             $isBalanced = round($totalDebit, 2) === round($totalCredit, 2);
 
             if (!$isBalanced) {
                 throw new Exception("El asiento contable no está cuadrado. Total Debe: {$totalDebit}, Total Haber: {$totalCredit}");
             }
 
-            // 4. Crear cabecera
+            // 5. Crear cabecera incluyendo el Owner, el Año y el Correlativo único
             $journal = Journal::create([
                 'vc_document_id' => $document->id,
-                'date' => $document->date,
-                'total_debit' => $totalDebit,
-                'total_credit' => $totalCredit,
-                'is_balanced' => $isBalanced,
+                'owner_id'       => $ownerId,
+                'year'           => $year,
+                'entry_number'   => $nextEntryNumber,
+                'date'           => $document->date,
+                'total_debit'    => $totalDebit,
+                'total_credit'   => $totalCredit,
+                'is_balanced'    => $isBalanced,
             ]);
 
-            // 5. Crear líneas de detalle
+            // 6. Crear líneas de detalle
             foreach ($entriesData as $entry) {
                 $journal->entries()->create($entry);
             }

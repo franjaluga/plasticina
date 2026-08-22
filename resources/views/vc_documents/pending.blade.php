@@ -8,7 +8,15 @@
 </head>
 <body class="container py-5">
 
-    <h2 class="mb-4">Documentos V/C Pendientes de Contabilización</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Documentos V/C Pendientes de Contabilización</h2>
+            <p class="text-muted mb-0">Periodo tributario año: <span class="fw-bold text-primary">{{ session('working_year', date('Y')) }}</span></p>
+        </div>
+        <div>
+            <a href="{{ route('vc_documents.create') }}" class="btn btn-outline-secondary btn-sm">Volver al Inicio</a>
+        </div>
+    </div>
 
     <!-- Mensajes de éxito o error -->
     @if(session('success'))
@@ -17,7 +25,7 @@
 
     @if($errors->any())
         <div class="alert alert-danger">
-            <ul>
+            <ul class="mb-0">
                 @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -30,41 +38,43 @@
 
         <div class="mb-3">
             <button type="submit" class="btn btn-primary">Contabilizar Seleccionados</button>
-            <a href="{{ route('vc_documents.create') }}" class="btn btn-secondary">Crear Nuevo Documento</a>
         </div>
 
-        <table class="table table-bordered table-striped">
+        <table class="table table-bordered table-striped align-middle">
             <thead>
                 <tr>
-                    <th width="50px">
+                    <th width="50px" class="text-center">
                         <input type="checkbox" id="select-all" class="form-check-input">
                     </th>
-                    <th>ID</th>
-                    <th>Fecha</th>
                     <th>Folio</th>
                     <th>Tipo V/C</th>
-                    <th>Neto</th>
-                    <th>IVA Rec.</th>
-                    <th>Total</th>
+                    <th>Fecha Doc.</th>
+                    <th class="text-end">Neto</th>
+                    <th class="text-end">IVA Rec.</th>
+                    <th class="text-end">Total</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($documents as $doc)
                     <tr>
-                        <td>
+                        <td class="text-center">
+                            {{-- El value DEBE ser el id del documento para que el batchProcess funcione correctamente --}}
                             <input type="checkbox" name="document_ids[]" value="{{ $doc->id }}" class="form-check-input doc-checkbox">
                         </td>
-                        <td>{{ $doc->id }}</td>
+                        <td class="fw-bold">{{ $doc->folio }}</td>
+                        <td>
+                            <span class="badge bg-{{ $doc->type_vc === 'V' ? 'success' : 'info' }}">
+                                {{ $doc->type_vc === 'V' ? 'Venta' : 'Compra' }}
+                            </span>
+                        </td>
                         <td>{{ $doc->date }}</td>
-                        <td>{{ $doc->folio }}</td>
-                        <td>{{ $doc->type_vc }}</td>
-                        <td>{{ number_format($doc->net, 0, ',', '.') }}</td>
-                        <td>{{ number_format($doc->vat_rec, 0, ',', '.') }}</td>
-                        <td>{{ number_format($doc->total, 0, ',', '.') }}</td>
+                        <td class="text-end">{{ number_format($doc->net, 0, ',', '.') }}</td>
+                        <td class="text-end">{{ number_format($doc->vat_rec, 0, ',', '.') }}</td>
+                        <td class="text-end fw-bold">{{ number_format($doc->total, 0, ',', '.') }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="text-center">No hay documentos pendientes de contabilizar.</td>
+                        <td colspan="7" class="text-center py-4 text-muted">No hay documentos pendientes de contabilizar para el año {{ session('working_year', date('Y')) }}.</td>
                     </tr>
                 @endforelse
             </tbody>

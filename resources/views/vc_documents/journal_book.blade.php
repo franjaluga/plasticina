@@ -8,11 +8,13 @@
 </head>
 <body class="bg-white text-gray-900 font-sans p-8 max-w-5xl mx-auto">
 
-    <!-- Cabecera simple con el enlace de exportación -->
+    <!-- Cabecera simple con el año activo y enlaces -->
     <div class="flex justify-between items-baseline border-b border-gray-300 pb-4 mb-6">
         <div>
             <h1 class="text-xl font-semibold tracking-tight">Libro Diario</h1>
-            <p class="text-xs text-gray-500">Registro histórico de asientos contables</p>
+            <p class="text-xs text-gray-500">
+                Periodo tributario año: <span class="font-bold text-indigo-600">{{ $year ?? session('working_year', date('Y')) }}</span>
+            </p>
         </div>
         <div class="space-x-4 text-sm">
             <a href="{{ route('vc_documents.export_csv') }}" class="text-green-600 hover:underline font-medium">Exportar a CSV</a>
@@ -35,10 +37,13 @@
             </thead>
             <tbody class="divide-y divide-gray-100 text-xs">
                 @forelse($journals as $journal)
-                    <!-- Separador o contexto del Asiento -->
+                    <!-- Separador o contexto del Asiento con el nuevo entry_number -->
                     <tr class="bg-gray-50 font-medium text-gray-700">
                         <td colspan="5" class="py-2 px-2">
-                            Asiento #{{ $journal->id }} — {{ $journal->date }} (Doc ID: {{ $journal->vc_document_id }})
+                            Asiento N° <span class="font-bold text-indigo-700">{{ $journal->entry_number }}</span> — Fecha: {{ $journal->date }} 
+                            @if($journal->document)
+                                <span class="text-gray-500 font-normal">(Doc Folio: {{ $journal->document->folio }})</span>
+                            @endif
                             <span class="float-right font-normal {{ $journal->is_balanced ? 'text-green-600' : 'text-red-600' }}">
                                 {{ $journal->is_balanced ? '● Cuadrado' : '● Descuadrado' }}
                             </span>
@@ -55,13 +60,13 @@
                     @endforeach
                     <!-- Totales por asiento sutiles -->
                     <tr class="border-b border-gray-200 text-gray-500">
-                        <td colspan="3" class="py-1 px-2 text-right italic">Total Asiento #{{ $journal->id }}</td>
+                        <td colspan="3" class="py-1 px-2 text-right italic">Total Asiento N° {{ $journal->entry_number }}</td>
                         <td class="py-1 px-4 text-right font-mono">{{ number_format($journal->total_debit, 2, ',', '.') }}</td>
                         <td class="py-1 px-4 text-right font-mono">{{ number_format($journal->total_credit, 2, ',', '.') }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="text-center py-10 text-gray-400">No hay registros en el libro diario.</td>
+                        <td colspan="5" class="text-center py-10 text-gray-400">No hay registros en el libro diario para este año.</td>
                     </tr>
                 @endforelse
             </tbody>
