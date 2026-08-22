@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
     public function up(): void
     {
         Schema::create('vc_documents', function (Blueprint $table) {
@@ -38,8 +37,9 @@ return new class extends Migration
             $table->bigInteger('minus_oth_tax')->default(0);
             $table->bigInteger('total')->default(0);
 
-            $table->integer('owner_id');
-
+            // Única línea para el owner
+            $table->foreignId('owner_id')->constrained('owners')->onDelete('restrict');
+            
             $table->index(['year_register', 'month_register', 'type_vc']);
         });
     }

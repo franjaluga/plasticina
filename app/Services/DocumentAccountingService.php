@@ -72,16 +72,31 @@ class DocumentAccountingService
         ];
     }
 
-    public function getJournalBookRecords(): Collection
+    public function getJournalBookRecords(?int $year = null, ?int $month = null): Collection
     {
-        return Journal::with(['entries', 'document'])
+        $year = $year ?? date('Y');
+        $month = $month ?? date('m');
+
+        $activeOwner = app(OwnerService::class)->getActiveOwner();
+
+        return Journal::with(['entries.account', 'document'])
+            ->whereHas('document', function ($query) use ($year, $month, $activeOwner) {
+                $query->where('year_register', $year)
+                    ->where('month_register', $month)
+                    ->where('owner_id', $activeOwner?->id);
+            })
             ->orderBy('date', 'desc')
-            ->orderBy('id', 'desc')
             ->get();
     }
 
     public function getPendingDocuments(): Collection
     {
-        return VCDocument::doesntHave('journal')->get();
+        $activeOwner = app(OwnerService::class)->getActiveOwner();
+
+        return VCDocument::where('owner_id', $activeOwner?->id)
+            ->doesntHave('journal')
+            ->orderBy('year_register', 'desc')
+            ->orderBy('month_register', 'desc')
+            ->get();
     }
 }
