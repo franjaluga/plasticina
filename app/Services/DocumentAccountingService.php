@@ -31,9 +31,7 @@ class DocumentAccountingService
             }
 
             try {
-                // Pasamos la cuenta personalizada al mapeador
                 $accountMapping = $this->getAccountMapping($document, $customNetAccount);
-
                 $this->journalService->registerDocumentJournal($document, $accountMapping);
                 $successCount++;
             } catch (Exception $e) {
@@ -47,29 +45,24 @@ class DocumentAccountingService
         ];
     }
 
-    /**
-     * Define el mapeo de cuentas contables dependiendo si es Compra (C) o Venta (V).
-     */
     protected function getAccountMapping(VCDocument $document, ?string $customNetAccount = null): array
     {
         $tipo = strtoupper(trim($document->type_vc ?? 'C')); 
 
-        // Si el usuario ingresó una cuenta personalizada, la usamos para el 'net', de lo contrario usamos la por defecto
         $netAccountCode = !empty($customNetAccount) ? $customNetAccount : ($tipo === 'V' || $tipo === 'VENTA' ? '410101' : '110101');
 
         if ($tipo === 'V' || $tipo === 'VENTA') {
             return [
-                'net'     => ['account_code' => $netAccountCode, 'type' => 'credit'], // Ventas (Haber)
-                'vat_rec' => ['account_code' => '210201', 'type' => 'credit'], // IVA Débito (Haber)
-                'total'   => ['account_code' => '110102', 'type' => 'debit'],  // Clientes (Debe)
+                'net'     => ['account_code' => $netAccountCode, 'type' => 'credit'],
+                'vat_rec' => ['account_code' => '210201', 'type' => 'credit'],
+                'total'   => ['account_code' => '110102', 'type' => 'debit'],
             ];
         }
 
-        // Por defecto Compras ('C')
         return [
-            'net'     => ['account_code' => $netAccountCode, 'type' => 'debit'],  // Compras (Debe)
-            'vat_rec' => ['account_code' => '110201', 'type' => 'debit'],  // IVA Crédito (Debe)
-            'total'   => ['account_code' => '210101', 'type' => 'credit'], // Proveedores (Haber)
+            'net'     => ['account_code' => $netAccountCode, 'type' => 'debit'],
+            'vat_rec' => ['account_code' => '110201', 'type' => 'debit'],
+            'total'   => ['account_code' => '210101', 'type' => 'credit'],
         ];
     }
 
@@ -81,8 +74,8 @@ class DocumentAccountingService
         return Journal::with(['entries.account', 'document'])
             ->where('owner_id', $activeOwner?->id)
             ->where('year', $year)
-            ->orderBy('date', 'desc')
-            ->orderBy('entry_number', 'desc')
+            ->orderBy('date', 'asc')         // Orden ascendente por fecha
+            ->orderBy('entry_number', 'asc') // Orden ascendente por correlativo de asiento
             ->get();
     }
 
@@ -94,8 +87,8 @@ class DocumentAccountingService
         return VCDocument::where('owner_id', $activeOwner?->id)
             ->where('year_register', $workingYear)
             ->doesntHave('journal')
-            ->orderBy('month_register', 'desc')
-            ->orderBy('date', 'desc')
+            ->orderBy('month_register', 'asc')
+            ->orderBy('date', 'asc')
             ->get();
     }
 }
