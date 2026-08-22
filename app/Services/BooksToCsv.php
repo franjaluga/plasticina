@@ -23,7 +23,7 @@ class BooksToCsv
         return response()->streamDownload(function () use ($journals) {
             $file = fopen('php://output', 'w');
 
-            // Forzar BOM en UTF-8 para que LibreOffice reconozca las tildes correctamente
+            // Forzar BOM en UTF-8 para que Excel/LibreOffice reconozcan las tildes correctamente
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
 
             // Cabeceras del CSV usando punto y coma ';' como separador
@@ -38,7 +38,11 @@ class BooksToCsv
                 'Haber'
             ], ';');
 
+            $totalJournals = count($journals);
+            $currentIndex = 0;
+
             foreach ($journals as $journal) {
+                $currentIndex++;
                 $estado = $journal->is_balanced ? 'Cuadrado' : 'Descuadrado';
 
                 foreach ($journal->entries as $entry) {
@@ -52,6 +56,11 @@ class BooksToCsv
                         $entry->debit ?? 0,
                         $entry->credit ?? 0,
                     ], ';');
+                }
+
+                // Agregar una línea separadora '---' entre cada asiento (excepto después del último)
+                if ($currentIndex < $totalJournals) {
+                    fputcsv($file, ['---', '---', '---', '---', '---', '---', '---', '---'], ';');
                 }
             }
 
