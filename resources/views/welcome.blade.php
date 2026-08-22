@@ -3,13 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sistema de Documentos V/C</title>
+    <title>Sistema Contable</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="font-sans antialiased bg-slate-50 text-slate-900 flex items-center justify-center min-h-screen p-4">
 
-    <div class="max-w-2xl w-full mx-auto p-8 bg-white shadow-xl rounded-2xl border border-slate-100">
+    <div class="max-w-5xl w-full mx-auto p-8 bg-white shadow-xl rounded-2xl border border-slate-100">
         
         <!-- Contenedor superior: Owner Activo y Selector de Año -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
@@ -58,7 +58,7 @@
 
         </div>
 
-        <!-- Alerta de Documentos Pendientes (Solo aparece si hay pendientes) -->
+        <!-- Alerta de Documentos Pendientes -->
         @if(isset($pendingCount) && $pendingCount > 0)
             <div class="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between text-amber-900">
                 <div class="text-left text-sm flex items-center space-x-3">
@@ -79,79 +79,61 @@
         @endif
 
         <!-- Encabezado de la vista -->
-        <div class="text-center mb-6">
-            <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Sistema de Documentos V/C</h1>
-            <p class="text-sm text-slate-500 mt-1">Selecciona una opción para gestionar tus registros de ventas y compras</p>
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Sistema Contable</h1>
+            <p class="text-sm text-slate-500 mt-1">Selecciona una categoría para comenzar a gestionar la contabilidad</p>
         </div>
 
-        <!-- Grid de Cards de Acciones -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Grilla 1x3 (3 columnas en paralelo) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             
-            <!-- Card 1: Ingresar Nuevo Documento -->
-            <a href="{{ route('vc_documents.create') }}" class="group p-5 bg-white border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-md transition text-left flex flex-col justify-between">
+            <!-- Bloque 1: Registros Manuales -->
+            <a href="{{ route('vc_documents.create') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-indigo-500 hover:shadow-lg transition text-left flex flex-col justify-between">
                 <div>
-                    <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3 group-hover:bg-indigo-600 group-hover:text-white transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     </div>
-                    <h2 class="font-bold text-slate-800 group-hover:text-indigo-600 transition text-base">Nuevo Documento</h2>
-                    <p class="text-xs text-slate-500 mt-1">Registra manualmente una venta o compra individual.</p>
+                    <h2 class="font-bold text-slate-800 group-hover:text-indigo-600 transition text-base mb-1">1. Registros Manuales</h2>
+                    <p class="text-xs text-slate-500 leading-relaxed">Registra de forma individual y detallada tus compras o ventas.</p>
                 </div>
-                <span class="text-xs font-semibold text-indigo-600 mt-4 flex items-center">
+                <span class="text-xs font-semibold text-indigo-600 mt-6 flex items-center">
                     Ingresar &rarr;
                 </span>
             </a>
 
-            <!-- Card 2: Ingresar vía importador -->
-            <a href="{{ route('vc_documents.upload') }}" class="group p-5 bg-white border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-md transition text-left flex flex-col justify-between">
+            <!-- Bloque 2: Importadores -->
+            <a href="{{ route('vc_documents.upload') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-indigo-500 hover:shadow-lg transition text-left flex flex-col justify-between">
                 <div>
-                    <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3 group-hover:bg-indigo-600 group-hover:text-white transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                     </div>
-                    <h2 class="font-bold text-slate-800 group-hover:text-indigo-600 transition text-base">Importar Masivo</h2>
-                    <p class="text-xs text-slate-500 mt-1">Carga múltiples documentos a través de archivos.</p>
+                    <h2 class="font-bold text-slate-800 group-hover:text-indigo-600 transition text-base mb-1">2. Importadores</h2>
+                    <p class="text-xs text-slate-500 leading-relaxed">Realiza la carga masiva de múltiples documentos mediante archivos.</p>
                 </div>
-                <span class="text-xs font-semibold text-indigo-600 mt-4 flex items-center">
-                    Cargar archivo &rarr;
+                <span class="text-xs font-semibold text-indigo-600 mt-6 flex items-center">
+                    Cargar &rarr;
                 </span>
             </a>
 
-            <!-- Card 3: Ver Libro Diario -->
-            <a href="{{ route('vc_documents.journal_book') }}" class="group p-5 bg-white border border-slate-200 rounded-xl hover:border-emerald-500 hover:shadow-md transition text-left flex flex-col justify-between sm:col-span-2">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:bg-emerald-600 group-hover:text-white transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        </div>
-                        <h2 class="font-bold text-slate-800 group-hover:text-emerald-600 transition text-base">Ver Libro Diario</h2>
-                        <p class="text-xs text-slate-500 mt-1">Consulta los movimientos contables registrados y asientos generados.</p>
+            <!-- Bloque 3: Reportes Contables -->
+            <a href="{{ route('accounting.reports.index') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-emerald-500 hover:shadow-lg transition text-left flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 group-hover:bg-emerald-600 group-hover:text-white transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </div>
-                    <span class="text-xs font-semibold text-emerald-600 flex items-center">
-                        Consultar &rarr;
-                    </span>
+                    <h2 class="font-bold text-slate-800 group-hover:text-emerald-600 transition text-base mb-1">3. Reportes Contables</h2>
+                    <p class="text-xs text-slate-500 leading-relaxed">Consulta el libro diario, balance tributario de 8 columnas y más.</p>
                 </div>
-            </a>
-
-            <!-- Card 4: Balance Tributario (8 Columnas) -->
-            <a href="{{ route('vc_documents.tax_balance') }}" class="group p-5 bg-white border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-md transition text-left flex flex-col justify-between sm:col-span-2">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3 group-hover:bg-indigo-600 group-hover:text-white transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                        </div>
-                        <h2 class="font-bold text-slate-800 group-hover:text-indigo-600 transition text-base">Balance Tributario (8 Columnas)</h2>
-                        <p class="text-xs text-slate-500 mt-1">Genera el resumen contable anual por sumas, saldos, inventario y resultados.</p>
-                    </div>
-                    <span class="text-xs font-semibold text-indigo-600 flex items-center">
-                        Generar &rarr;
-                    </span>
-                </div>
+                <span class="text-xs font-semibold text-emerald-600 mt-6 flex items-center">
+                    Ver reportes &rarr;
+                </span>
             </a>
 
         </div>
 
         <!-- Footer -->
         <div class="mt-8 pt-4 border-t border-slate-200 text-xs text-slate-400 flex justify-between items-center">
-            <p>Sistema en proceso de desarrollo</p>
+            <p>Sistema Contable v1.0</p>
         </div>
     </div>
 

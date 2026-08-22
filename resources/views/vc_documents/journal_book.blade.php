@@ -19,7 +19,9 @@
         <div class="space-x-4 text-sm">
             <a href="{{ route('vc_documents.export_csv') }}" class="text-green-600 hover:underline font-medium">Exportar a CSV</a>
             <a href="{{ route('vc_documents.pending') }}" class="text-gray-600 hover:underline">Pendientes</a>
-            <a href="{{ route('vc_documents.create') }}" class="text-indigo-600 hover:underline">Inicio</a>
+            <a href="{{ route('welcome') }}" class="text-xs font-semibold bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition">
+                &larr; Volver
+            </a>
         </div>
     </div>
 

@@ -21,7 +21,7 @@ Route::get('/', function (OwnerService $ownerService) {
     }
 
     return view('welcome', compact('activeOwner', 'pendingCount'));
-});
+})->name('welcome');
 
 // PERIODO CONTABLE
 Route::post('/period/update', function (\Illuminate\Http\Request $request) {
@@ -71,3 +71,6 @@ Route::get('/vc-documents/libro-diario/export-csv', [VCDocumentController::class
 // BALANCE
 Route::get('/vc-documents/balance-tributario', [AccountingReportController::class, 'taxBalance'])
     ->name('vc_documents.tax_balance');
+
+Route::get('/accounting/reports', [AccountingReportController::class, 'index'])
+    ->name('accounting.reports.index');

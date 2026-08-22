@@ -7,6 +7,11 @@ use App\Services\TaxBalanceService;
 
 class AccountingReportController extends Controller
 {
+    public function index()
+    {
+        return view('accounting.index');
+    }
+    
     public function taxBalance(TaxBalanceService $balanceService)
     {
         $year = session('working_year', date('Y'));

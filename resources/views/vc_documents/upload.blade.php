@@ -4,10 +4,10 @@
 <div class="container" style="max-width: 600px; margin: 40px auto; padding: 20px;">
     <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 30px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
         
-        <!-- Encabezado -->
-        <div style="margin-bottom: 20px; text-align: left;">
+        <!-- Encabezado Limpio -->
+        <div style="margin-bottom: 20px; text-align: left; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px;">
             <h2 style="font-size: 24px; font-weight: bold; color: #1e293b; margin-bottom: 5px;">Importar documentos V/C</h2>
-            <p style="font-size: 14px; color: #64748b;">Carga masiva de registros de ventas y compras a través de un archivo CSV.</p>
+            <p style="font-size: 14px; color: #64748b; margin: 0;">Carga masiva de registros de ventas y compras a través de un archivo CSV.</p>
         </div>
 
         <!-- Alerta de Éxito -->
@@ -28,7 +28,7 @@
             </div>
         @endif
 
-        <!-- Formulario con CSS Tradicional -->
+        <!-- Formulario -->
         <form action="{{ route('vc_documents.csv') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
@@ -51,7 +51,7 @@
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 20px;">
-                <a href="{{ url()->previous() }}" style="font-size: 14px; color: #64748b; text-decoration: none;">
+                <a href="{{ url('/') }}" style="font-size: 14px; font-weight: 500; background: #f1f5f9; color: #334155; padding: 10px 16px; border-radius: 8px; text-decoration: none;">
                     &larr; Volver
                 </a>
                 <button type="submit" style="background: #4f46e5; color: #ffffff; border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">

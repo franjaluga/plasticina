@@ -22,7 +22,9 @@
             </div>
         </div>
         <div class="text-sm">
-            <a href="{{ route('vc_documents.create') }}" class="text-slate-600 hover:underline">Inicio</a>
+            <a href="{{ route('welcome') }}" class="text-xs font-semibold bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition">
+                &larr; Volver
+            </a>
         </div>
     </div>
 

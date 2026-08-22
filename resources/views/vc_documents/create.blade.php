@@ -10,10 +10,15 @@
 <body class="font-sans antialiased bg-gray-100 text-gray-900">
 
     <header class="bg-white shadow mb-8">
-        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Ingresar Documento V/C') }}
             </h2>
+            <div>
+                <a href="{{ url('/') }}" class="text-xs font-semibold bg-gray-100 text-gray-700 px-3.5 py-2 rounded-lg hover:bg-gray-200 transition shadow-sm">
+                    &larr; Volver al Inicio
+                </a>
+            </div>
         </div>
     </header>
 
@@ -157,8 +162,8 @@
                     </div>
 
                     <div class="flex justify-end pt-4 border-t">
-                        <a href="{{ route('vc_documents.create') }}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 mr-3">
-                            Cancelar / Limpiar
+                        <a href="{{ url('/') }}" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 mr-3">
+                            Cancelar / Volver
                         </a>
                         <button type="submit" class="bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 inline-flex justify-center text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             Guardar Documento
