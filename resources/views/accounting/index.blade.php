@@ -99,7 +99,7 @@
                 </form>
             </div>
 
-            <!-- NUEVA TARJETA: Libro Mayor -->
+            <!-- TARJETA: Libro Mayor -->
             <div class="md:col-span-2 p-5 bg-slate-50 border border-slate-200 rounded-xl">
                 <div class="flex items-center mb-3">
                     <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center mr-3">
@@ -111,11 +111,18 @@
                     </div>
                 </div>
 
-                <!-- Formulario Libro Mayor -->
+                <!-- Formulario Libro Mayor con Datalist -->
                 <form action="{{ route('accounting.ledger') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-4">
                     <div>
                         <label for="account_code" class="block text-xs font-semibold text-slate-600 mb-1">N° de Cuenta</label>
-                        <input type="text" name="account_code" id="account_code" placeholder="Ej: 110101" value="{{ request('account_code') }}" class="w-full text-xs rounded-lg border-slate-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 p-2 bg-white border" required>
+                        <input type="text" name="account_code" id="account_code" value="{{ request('account_code') }}" list="accounts_list" placeholder="Seleccione o escriba código" autocomplete="off" class="w-full text-xs rounded-lg border-slate-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 p-2 bg-white border" required>
+                        
+                        <!-- Datalist poblado dinámicamente desde el modelo Account -->
+                        <datalist id="accounts_list">
+                            @foreach($accounts as $acc)
+                                <option value="{{ $acc->code }}">{{ $acc->name }}</option>
+                            @endforeach
+                        </datalist>
                     </div>
                     <div>
                         <label for="ledger_month" class="block text-xs font-semibold text-slate-600 mb-1">Mes</label>
