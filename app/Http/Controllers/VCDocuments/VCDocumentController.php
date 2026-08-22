@@ -114,4 +114,14 @@ class VCDocumentController extends Controller
 
         return $redirect;
     }
+
+    public function journalBook()
+    {
+        $journals = \App\Models\Accounting\Journal::with(['entries', 'document'])
+            ->orderBy('date', 'desc')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('vc_documents.journal_book', compact('journals'));
+    }
 }

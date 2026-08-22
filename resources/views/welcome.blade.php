@@ -68,6 +68,11 @@
             <p>Sistema en proceso de desarrollo</p>
             <a href="{{ route('owners.index') }}" class="text-indigo-600 hover:underline">Gestionar Owners</a>
         </div>
+        <div class="space-y-4 mt-4">
+            <a href="{{ route('vc_documents.journal_book') }}" class="block w-full bg-emerald-600 text-white font-medium py-3 px-4 rounded-md shadow hover:bg-emerald-700 transition">
+                Ver Libro Diario
+            </a>
+        </div>
     </div>
 
 </body>

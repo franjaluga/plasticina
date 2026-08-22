@@ -41,3 +41,7 @@ Route::get('/vc-documents/pendientes', [VCDocumentController::class, 'pendingLis
 // Contabilización masiva (lote)
 Route::post('/vc-documents/contabilizar-masivo', [VCDocumentController::class, 'batchContabilizar'])
      ->name('vc_documents.batch_contabilizar');
+
+// Libro Diario Contable
+Route::get('/vc-documents/libro-diario', [VCDocumentController::class, 'journalBook'])
+     ->name('vc_documents.journal_book');
