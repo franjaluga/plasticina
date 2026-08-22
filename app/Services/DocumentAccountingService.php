@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\VCDocuments\VCDocument;
 use App\Services\JournalService;
 use Exception;
+use App\Models\Accounting\Journal;
+use Illuminate\Database\Eloquent\Collection;
 
 class DocumentAccountingService
 {
@@ -41,5 +43,18 @@ class DocumentAccountingService
             'success_count' => $successCount,
             'errors'        => $errorMessages,
         ];
+    }
+
+    public function getJournalBookRecords(): Collection
+    {
+        return Journal::with(['entries', 'document'])
+            ->orderBy('date', 'desc')
+            ->orderBy('id', 'desc')
+            ->get();
+    }
+
+    public function getPendingDocuments(): Collection
+    {
+        return VCDocument::doesntHave('journal')->get();
     }
 }

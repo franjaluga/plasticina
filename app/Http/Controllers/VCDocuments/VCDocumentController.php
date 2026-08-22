@@ -73,9 +73,9 @@ class VCDocumentController extends Controller
         }
     }
 
-    public function pendingList()
+    public function pendingList(DocumentAccountingService $accountingService)
     {
-        $documents = VCDocument::doesntHave('journal')->get();
+        $documents = $accountingService->getPendingDocuments();
 
         return view('vc_documents.pending', compact('documents'));
     }
@@ -98,12 +98,9 @@ class VCDocumentController extends Controller
         return $redirect;
     }
 
-    public function journalBook()
+    public function journalBook(DocumentAccountingService $accountingService)
     {
-        $journals = \App\Models\Accounting\Journal::with(['entries', 'document'])
-            ->orderBy('date', 'desc')
-            ->orderBy('id', 'desc')
-            ->get();
+        $journals = $accountingService->getJournalBookRecords();
 
         return view('vc_documents.journal_book', compact('journals'));
     }
