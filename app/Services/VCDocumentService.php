@@ -58,6 +58,11 @@ class VCDocumentService
 
     public function persistDocument(array $validated): VCDocument
     {
+        // Validar la regla matemática del documento
+        if (!$this->isDocumentBalanced($validated)) {
+            throw new Exception('El documento no está cuadrado: los componentes no suman el total indicado.');
+        }
+
         $entity = Entity::firstOrCreate(
             ['rut' => $validated['rut']],
             ['name' => $validated['entity_name']]
@@ -200,5 +205,22 @@ class VCDocumentService
         }
 
         return $data;
+    }
+
+    private function isDocumentBalanced(array $data): bool
+    {
+        // Obtenemos los valores considerando 0 si vienen nulos
+        $net = (int) ($data['net'] ?? 0);
+        $exempt = (int) ($data['exempt'] ?? 0);
+        $vatRec = (int) ($data['vat_rec'] ?? 0);
+        $vatNoRec = (int) ($data['vat_no_rec'] ?? 0);
+        $plusOthTax = (int) ($data['plus_oth_tax'] ?? 0);
+        $minusOthTax = (int) ($data['minus_oth_tax'] ?? 0);
+        $total = (int) ($data['total'] ?? 0);
+
+        // net + exempt + vat_rec + vat_no_rec + plus_oth_tax - minus_oth_tax = total
+        $calculatedTotal = $net + $exempt + $vatRec + $vatNoRec + $plusOthTax - $minusOthTax;
+
+        return $calculatedTotal === $total;
     }
 }

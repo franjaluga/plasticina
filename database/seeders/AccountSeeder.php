@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Account;
+use App\Models\Accounts\Account;
 
 class AccountSeeder extends Seeder
 {
