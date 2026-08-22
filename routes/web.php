@@ -45,3 +45,7 @@ Route::post('/vc-documents/contabilizar-masivo', [VCDocumentController::class, '
 // Libro Diario Contable
 Route::get('/vc-documents/libro-diario', [VCDocumentController::class, 'journalBook'])
      ->name('vc_documents.journal_book');
+     
+// exportarlo a csv
+Route::get('/vc-documents/libro-diario/export-csv', [VCDocumentController::class, 'exportCsv'])
+    ->name('vc_documents.export_csv');

@@ -9,6 +9,8 @@ use App\Services\VCDocumentService;
 use App\Services\JournalService;
 use Illuminate\Http\Request;
 use App\Services\DocumentAccountingService;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Services\BooksToCsv;
 
 class VCDocumentController extends Controller
 {
@@ -103,5 +105,10 @@ class VCDocumentController extends Controller
         $journals = $accountingService->getJournalBookRecords();
 
         return view('vc_documents.journal_book', compact('journals'));
+    }
+
+    public function exportCsv(BooksToCsv $csvService): StreamedResponse
+    {
+        return $csvService->export();
     }
 }

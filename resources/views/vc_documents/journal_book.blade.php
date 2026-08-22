@@ -6,84 +6,65 @@
     <title>Libro Diario Contable</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="font-sans antialiased bg-gray-100 text-gray-900 min-h-screen p-6">
+<body class="bg-white text-gray-900 font-sans p-8 max-w-5xl mx-auto">
 
-    <div class="max-w-6xl mx-auto bg-white shadow-md rounded-lg p-6">
-        
-        <!-- Cabecera -->
-        <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-800">Libro Diario</h1>
-                <p class="text-sm text-gray-600">Registro histórico de asientos contables de documentos V/C</p>
-            </div>
-            <div>
-                <a href="{{ route('vc_documents.pending') }}" class="bg-gray-600 text-white text-sm px-4 py-2 rounded hover:bg-gray-700 transition mr-2">
-                    Pendientes
-                </a>
-                <a href="{{ route('vc_documents.create') }}" class="bg-indigo-600 text-white text-sm px-4 py-2 rounded hover:bg-indigo-700 transition">
-                    Volver al Inicio
-                </a>
-            </div>
+    <!-- Cabecera simple -->
+    <div class="flex justify-between items-baseline border-b border-gray-300 pb-4 mb-6">
+        <div>
+            <h1 class="text-xl font-semibold tracking-tight">Libro Diario</h1>
+            <p class="text-xs text-gray-500">Registro histórico de asientos contables</p>
         </div>
-
-        <!-- Listado de Asientos -->
-        <div class="space-y-6">
-            @forelse($journals as $journal)
-                <div class="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-                    <!-- Cabecera del Asiento -->
-                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex justify-between items-center text-sm">
-                        <div>
-                            <span class="font-bold text-indigo-700">Asiento #{{ $journal->id }}</span> 
-                            <span class="text-gray-500 mx-2">|</span> 
-                            <span class="font-medium text-gray-700">Fecha: {{ $journal->date }}</span>
-                            <span class="text-gray-500 mx-2">|</span>
-                            <span class="text-gray-600">Doc V/C ID: {{ $journal->vc_document_id }}</span>
-                        </div>
-                        <div>
-                            @if($journal->is_balanced)
-                                <span class="bg-green-100 text-green-800 text-xs px-2.5 py-1 rounded-full font-semibold">Cuadrado</span>
-                            @else
-                                <span class="bg-red-100 text-red-800 text-xs px-2.5 py-1 rounded-full font-semibold">Descuadrado</span>
-                            @endif
-                        </div>
-                    </div>
-
-                    <!-- Detalle del Asiento (Líneas) -->
-                    <table class="w-full text-left border-collapse text-sm">
-                        <thead>
-                            <tr class="bg-gray-100 text-gray-600 border-b border-gray-200 text-xs uppercase">
-                                <th class="py-2 px-4">Cuenta</th>
-                                <th class="py-2 px-4">Componente</th>
-                                <th class="py-2 px-4 text-right">Debe</th>
-                                <th class="py-2 px-4 text-right">Haber</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            @foreach($journal->entries as $entry)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="py-2 px-4 font-mono font-medium text-gray-800">{{ $entry->account_code }}</td>
-                                    <td class="py-2 px-4 text-gray-600 capitalize">{{ str_replace('_', ' ', $entry->component_name) }}</td>
-                                    <td class="py-2 px-4 text-right font-mono">{{ $entry->debit > 0 ? number_format($entry->debit, 2, ',', '.') : '-' }}</td>
-                                    <td class="py-2 px-4 text-right font-mono">{{ $entry->credit > 0 ? number_format($entry->credit, 2, ',', '.') : '-' }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                        <tfoot>
-                            <tr class="bg-gray-50 font-bold border-t border-gray-300">
-                                <td colspan="2" class="py-2 px-4 text-right">Totales:</td>
-                                <td class="py-2 px-4 text-right font-mono text-gray-800">{{ number_format($journal->total_debit, 2, ',', '.') }}</td>
-                                <td class="py-2 px-4 text-right font-mono text-gray-800">{{ number_format($journal->total_credit, 2, ',', '.') }}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            @empty
-                <div class="text-center py-12 text-gray-500">
-                    No existen asientos contables registrados en el libro diario.
-                </div>
-            @endforelse
+        <div class="space-x-3 text-sm">
+            <a href="{{ route('vc_documents.pending') }}" class="text-gray-600 hover:underline">Pendientes</a>
+            <a href="{{ route('vc_documents.create') }}" class="text-indigo-600 hover:underline">Inicio</a>
         </div>
+    </div>
 
+    <!-- Tabla Maestra / Minimalista -->
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-sm">
+            <thead>
+                <tr class="border-b border-gray-900 text-xs text-gray-500 uppercase">
+                    <th class="py-2 pr-4">Asiento / Fecha</th>
+                    <th class="py-2 px-4">Cuenta</th>
+                    <th class="py-2 px-4">Componente</th>
+                    <th class="py-2 px-4 text-right">Debe</th>
+                    <th class="py-2 px-4 text-right">Haber</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-xs">
+                @forelse($journals as $journal)
+                    <!-- Separador o contexto del Asiento -->
+                    <tr class="bg-gray-50 font-medium text-gray-700">
+                        <td colspan="5" class="py-2 px-2">
+                            Asiento #{{ $journal->id }} — {{ $journal->date }} (Doc ID: {{ $journal->vc_document_id }})
+                            <span class="float-right font-normal {{ $journal->is_balanced ? 'text-green-600' : 'text-red-600' }}">
+                                {{ $journal->is_balanced ? '● Cuadrado' : '● Descuadrado' }}
+                            </span>
+                        </td>
+                    </tr>
+                    @foreach($journal->entries as $entry)
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-2 pr-4"></td>
+                            <td class="py-2 px-4 font-mono text-gray-600">{{ $entry->account_code }}</td>
+                            <td class="py-2 px-4 text-gray-800">{{ $entry->account->name ?? 'Sin nombre' }}</td>
+                            <td class="py-2 px-4 text-right font-mono">{{ $entry->debit ? number_format($entry->debit, 2, ',', '.') : '-' }}</td>
+                            <td class="py-2 px-4 text-right font-mono">{{ $entry->credit ? number_format($entry->credit, 2, ',', '.') : '-' }}</td>
+                        </tr>
+                    @endforeach
+                    <!-- Totales por asiento sutiles -->
+                    <tr class="border-b border-gray-200 text-gray-500">
+                        <td colspan="3" class="py-1 px-2 text-right italic">Total Asiento #{{ $journal->id }}</td>
+                        <td class="py-1 px-4 text-right font-mono">{{ number_format($journal->total_debit, 2, ',', '.') }}</td>
+                        <td class="py-1 px-4 text-right font-mono">{{ number_format($journal->total_credit, 2, ',', '.') }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" class="text-center py-10 text-gray-400">No hay registros en el libro diario.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 
 </body>

@@ -11,4 +11,9 @@ class JournalEntry extends Model
     protected $fillable = [
         'journal_id', 'account_code', 'component_name', 'debit', 'credit'
     ];
+
+    public function account()
+    {
+        return $this->belongsTo(\App\Models\Account::class, 'account_code', 'code');
+    }
 }

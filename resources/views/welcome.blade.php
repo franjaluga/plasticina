@@ -73,6 +73,11 @@
                 Ver Libro Diario
             </a>
         </div>
+        <div class="space-y-4 mt-4">
+            <a href="{{ route('vc_documents.export_csv') }}" class="text-green-600 hover:underline">
+                Exportar CSV
+            </a>
+        </div>     
     </div>
 
 </body>
