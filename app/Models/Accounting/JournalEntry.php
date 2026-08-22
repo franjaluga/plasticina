@@ -3,6 +3,7 @@
 namespace App\Models\Accounting;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Accounts\Account;
 
 class JournalEntry extends Model
 {
@@ -14,6 +15,6 @@ class JournalEntry extends Model
 
     public function account()
     {
-        return $this->belongsTo(\App\Models\Account::class, 'account_code', 'code');
+        return $this->belongsTo(Account::class, 'account_code', 'code');
     }
 }

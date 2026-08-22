@@ -8,13 +8,14 @@
 </head>
 <body class="bg-white text-gray-900 font-sans p-8 max-w-5xl mx-auto">
 
-    <!-- Cabecera simple -->
+    <!-- Cabecera simple con el enlace de exportación -->
     <div class="flex justify-between items-baseline border-b border-gray-300 pb-4 mb-6">
         <div>
             <h1 class="text-xl font-semibold tracking-tight">Libro Diario</h1>
             <p class="text-xs text-gray-500">Registro histórico de asientos contables</p>
         </div>
-        <div class="space-x-3 text-sm">
+        <div class="space-x-4 text-sm">
+            <a href="{{ route('vc_documents.export_csv') }}" class="text-green-600 hover:underline font-medium">Exportar a CSV</a>
             <a href="{{ route('vc_documents.pending') }}" class="text-gray-600 hover:underline">Pendientes</a>
             <a href="{{ route('vc_documents.create') }}" class="text-indigo-600 hover:underline">Inicio</a>
         </div>
