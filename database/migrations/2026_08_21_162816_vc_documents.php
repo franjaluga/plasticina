@@ -38,6 +38,8 @@ return new class extends Migration
             $table->bigInteger('minus_oth_tax')->default(0);
             $table->bigInteger('total')->default(0);
 
+            $table->integer('owner_id');
+
             $table->index(['year_register', 'month_register', 'type_vc']);
         });
     }

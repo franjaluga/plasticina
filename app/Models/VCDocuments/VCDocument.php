@@ -28,6 +28,7 @@ class VCDocument extends Model
         'vat_no_rec',
         'plus_oth_tax',
         'minus_oth_tax',
-        'total'
+        'total',
+        'owner_id'
     ];
 }

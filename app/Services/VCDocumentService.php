@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Masters\Entity;
 use App\Models\Masters\DocumentType;
 use App\Models\VCDocuments\VCDocument;
+use App\Services\OwnerService; // <-- 1. Importar el servicio
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Exception;
@@ -12,6 +13,13 @@ use Throwable;
 
 class VCDocumentService
 {
+    protected OwnerService $ownerService;
+    
+    public function __construct(OwnerService $ownerService)
+    {
+        $this->ownerService = $ownerService;
+    }
+
     public static function rules(): array
     {
         return [
@@ -71,9 +79,12 @@ class VCDocumentService
             );
         }
 
+        $activeOwner = $this->ownerService->getActiveOwner();
+
         $validated = array_merge($validated, [
             'entity_id'         => $entity->id,
             'document_type_id'  => $documentType->doctype,
+            'owner_id'          => $activeOwner ? $activeOwner->id : null,
         ]);
 
         unset(
