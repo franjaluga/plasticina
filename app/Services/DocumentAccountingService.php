@@ -73,8 +73,9 @@ class DocumentAccountingService
         ];
     }
 
-    public function getJournalBookRecords(int $year): Collection
+    public function getJournalBookRecords(?int $year = null): Collection
     {
+        $year = $year ?? session('working_year', date('Y'));
         $activeOwner = app(OwnerService::class)->getActiveOwner();
 
         return Journal::with(['entries.account', 'document'])
