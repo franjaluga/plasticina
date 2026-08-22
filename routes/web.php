@@ -5,6 +5,8 @@ use App\Http\Controllers\VCDocuments\VCDocumentController;
 use App\Http\Controllers\Owners\OwnerController;
 use App\Services\OwnerService;
 use App\Models\VCDocuments\VCDocument;
+use App\Http\Controllers\Accounting\AccountingReportController;
+
 
 Route::get('/', function (OwnerService $ownerService) {
     $activeOwner = $ownerService->getActiveOwner();
@@ -65,3 +67,7 @@ Route::get('/vc-documents/libro-diario', [VCDocumentController::class, 'journalB
 // exportarlo a csv
 Route::get('/vc-documents/libro-diario/export-csv', [VCDocumentController::class, 'exportCsv'])
     ->name('vc_documents.export_csv');
+
+// BALANCE
+Route::get('/vc-documents/balance-tributario', [AccountingReportController::class, 'taxBalance'])
+    ->name('vc_documents.tax_balance');

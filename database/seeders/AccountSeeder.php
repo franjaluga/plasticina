@@ -10,18 +10,30 @@ class AccountSeeder extends Seeder
     public function run(): void
     {
         $accounts = [
-            ['code' => '410101', 'name' => 'Ventas'],
-            ['code' => '210201', 'name' => 'IVA Débito'],
-            ['code' => '110102', 'name' => 'Clientes'],
-            ['code' => '110101', 'name' => 'Compras'],
-            ['code' => '110201', 'name' => 'IVA Crédito'],
-            ['code' => '210101', 'name' => 'Proveedores'],
+            // Activos (1)
+            ['code' => '110101', 'name' => 'Caja / Banco', 'category' => 'activo'],
+            ['code' => '110102', 'name' => 'Clientes', 'category' => 'activo'],
+            ['code' => '110201', 'name' => 'IVA Crédito Fiscal', 'category' => 'activo'],
+            
+            // Pasivos (2)
+            ['code' => '210101', 'name' => 'Proveedores Nacionales', 'category' => 'pasivo'],
+            ['code' => '210201', 'name' => 'IVA Débito Fiscal', 'category' => 'pasivo'],
+
+            // Patrimonio (3)
+            ['code' => '310101', 'name' => 'Capital Social', 'category' => 'patrimonio'],
+
+            // Ingresos / Ganancia (4)
+            ['code' => '410101', 'name' => 'Ventas de Explotación', 'category' => 'ganancia'],
+
+            // Costos y Gastos / Pérdida (5 o 6)
+            ['code' => '510101', 'name' => 'Costo de Ventas', 'category' => 'perdida'],
+            ['code' => '510201', 'name' => 'Gastos Generales', 'category' => 'perdida'],
         ];
 
-        foreach ($accounts as $account) {
+        foreach ($accounts as $acc) {
             Account::updateOrCreate(
-                ['code' => $account['code']],
-                ['name' => $account['name']]
+                ['code' => $acc['code']],
+                $acc
             );
         }
     }

@@ -131,6 +131,22 @@
                 </div>
             </a>
 
+            <!-- Card 4: Balance Tributario (8 Columnas) -->
+            <a href="{{ route('vc_documents.tax_balance') }}" class="group p-5 bg-white border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-md transition text-left flex flex-col justify-between sm:col-span-2">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3 group-hover:bg-indigo-600 group-hover:text-white transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        </div>
+                        <h2 class="font-bold text-slate-800 group-hover:text-indigo-600 transition text-base">Balance Tributario (8 Columnas)</h2>
+                        <p class="text-xs text-slate-500 mt-1">Genera el resumen contable anual por sumas, saldos, inventario y resultados.</p>
+                    </div>
+                    <span class="text-xs font-semibold text-indigo-600 flex items-center">
+                        Generar &rarr;
+                    </span>
+                </div>
+            </a>
+
         </div>
 
         <!-- Footer -->
