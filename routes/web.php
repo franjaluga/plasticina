@@ -6,7 +6,7 @@ use App\Http\Controllers\Owners\OwnerController;
 use App\Services\OwnerService;
 use App\Models\VCDocuments\VCDocument;
 use App\Http\Controllers\Accounting\AccountingReportController;
-
+use App\Http\Controllers\Accounting\RetrievalDocumentController;
 
 Route::get('/', function (OwnerService $ownerService) {
     $activeOwner = $ownerService->getActiveOwner();
@@ -74,3 +74,7 @@ Route::get('/vc-documents/balance-tributario', [AccountingReportController::clas
 
 Route::get('/accounting/reports', [AccountingReportController::class, 'index'])
     ->name('accounting.reports.index');
+
+// recuperar documento
+Route::get('/accounting/documents/{id}', [RetrievalDocumentController::class, 'show'])
+    ->name('accounting.documents.detail');

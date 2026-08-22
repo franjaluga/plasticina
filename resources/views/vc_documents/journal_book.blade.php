@@ -19,7 +19,7 @@
         <div class="space-x-4 text-sm">
             <a href="{{ route('vc_documents.export_csv') }}" class="text-green-600 hover:underline font-medium">Exportar a CSV</a>
             <a href="{{ route('vc_documents.pending') }}" class="text-gray-600 hover:underline">Pendientes</a>
-            <a href="{{ route('welcome') }}" class="text-xs font-semibold bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition">
+            <a href="{{ url('/') }}" class="text-xs font-semibold bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition">
                 &larr; Volver
             </a>
         </div>
@@ -44,7 +44,11 @@
                         <td colspan="5" class="py-2 px-2">
                             Asiento N° <span class="font-bold text-indigo-700">{{ $journal->entry_number }}</span> — Fecha: {{ $journal->date }} 
                             @if($journal->document)
-                                <span class="text-gray-500 font-normal">(Doc Folio: {{ $journal->document->folio }})</span>
+                                <span class="text-gray-500 font-normal">(Doc Folio: 
+                                    <a href="{{ route('accounting.documents.detail', $journal->document->id) }}" class="text-indigo-600 hover:underline font-bold">
+                                        {{ $journal->document->folio }}
+                                    </a>)
+                                </span>
                             @endif
                             <span class="float-right font-normal {{ $journal->is_balanced ? 'text-green-600' : 'text-red-600' }}">
                                 {{ $journal->is_balanced ? '● Cuadrado' : '● Descuadrado' }}
