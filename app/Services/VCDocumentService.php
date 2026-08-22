@@ -12,6 +12,32 @@ use Throwable;
 
 class VCDocumentService
 {
+    public static function rules(): array
+    {
+        return [
+            'month_register'       => 'required|integer|min:1|max:12',
+            'year_register'        => 'required|integer|min:2000',
+            'type_vc'              => 'required|string|max:1',
+            'rut'                  => 'required|string|max:10',
+            'entity_name'          => 'required|string|max:100',
+            'doctype'              => 'required|integer',
+            'document_type_name'   => 'required|string|max:50',
+            'folio'                => 'required|integer',
+            'date'                 => 'required|date',
+            'rut_ref'              => 'nullable|string|max:10',
+            'folio_ref'            => 'nullable|integer',
+            'td_ref'               => 'nullable|string|max:1',
+            'date_centralize'      => 'nullable|date',
+            'net'                  => 'nullable|integer',
+            'exempt'               => 'nullable|integer',
+            'vat_rec'              => 'nullable|integer',
+            'vat_no_rec'           => 'nullable|integer',
+            'plus_oth_tax'         => 'nullable|integer',
+            'minus_oth_tax'        => 'nullable|integer',
+            'total'                => 'required|integer',
+        ];
+    }
+
     public function getEntityByRut(string $rut): ?Entity
     {
         return Entity::where('rut', $rut)->first();
@@ -99,7 +125,7 @@ class VCDocumentService
                 $data = array_combine($headers, $row);
                 $data = $this->prepareCsvRowData($data);
 
-                $validator = Validator::make($data, $this->validationRules());
+                $validator = Validator::make($data, self::rules());
 
                 if ($validator->fails()) {
                     $mensajes = implode(', ', $validator->errors()->all());
@@ -163,31 +189,5 @@ class VCDocumentService
         }
 
         return $data;
-    }
-
-    private function validationRules(): array
-    {
-        return [
-            'month_register'       => 'required|integer|min:1|max:12',
-            'year_register'        => 'required|integer|min:2000',
-            'type_vc'              => 'required|string|max:1',
-            'rut'                  => 'required|string|max:10',
-            'entity_name'          => 'required|string|max:100',
-            'doctype'              => 'required|integer',
-            'document_type_name'   => 'required|string|max:50',
-            'folio'                => 'required|integer',
-            'date'                 => 'required|date',
-            'rut_ref'              => 'nullable|string|max:10',
-            'folio_ref'            => 'nullable|integer',
-            'td_ref'               => 'nullable|string|max:1',
-            'date_centralize'      => 'nullable|date',
-            'net'                  => 'nullable|integer',
-            'exempt'               => 'nullable|integer',
-            'vat_rec'              => 'nullable|integer',
-            'vat_no_rec'           => 'nullable|integer',
-            'plus_oth_tax'         => 'nullable|integer',
-            'minus_oth_tax'        => 'nullable|integer',
-            'total'                => 'required|integer',
-        ];
     }
 }

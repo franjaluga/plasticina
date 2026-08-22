@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\VCDocuments;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreVCDocumentRequest;
 use App\Services\VCDocumentService;
 use Illuminate\Http\Request;
 
@@ -33,33 +34,10 @@ class VCDocumentController extends Controller
         ]);
     }
 
-    public function store(Request $request, VCDocumentService $service)
+    public function store(StoreVCDocumentRequest $request, VCDocumentService $service)
     {
-        $validated = $request->validate([
-            'month_register'       => 'required|integer|min:1|max:12',
-            'year_register'        => 'required|integer|min:2000',
-            'type_vc'              => 'required|string|max:1',
-            'rut'                  => 'required|string|max:10',
-            'entity_name'          => 'required|string|max:100',
-            'doctype'              => 'required|integer',
-            'document_type_name'   => 'required|string|max:50',
-            'folio'                => 'required|integer',
-            'date'                 => 'required|date',
-            'rut_ref'              => 'nullable|string|max:10',
-            'folio_ref'            => 'nullable|integer',
-            'td_ref'               => 'nullable|string|max:1',
-            'date_centralize'      => 'nullable|date',
-            'net'                  => 'nullable|integer',
-            'exempt'               => 'nullable|integer',
-            'vat_rec'              => 'nullable|integer',
-            'vat_no_rec'           => 'nullable|integer',
-            'plus_oth_tax'         => 'nullable|integer',
-            'minus_oth_tax'        => 'nullable|integer',
-            'total'                => 'required|integer',
-        ]);
-
         try {
-            $service->persistDocument($validated);
+            $service->persistDocument($request->validated());
 
             return redirect()
                 ->route('vc_documents.create')
