@@ -69,7 +69,7 @@ class VCDocumentController extends Controller
                 ->with('success', "¡CSV importado correctamente! Se ingresaron {$rowsProcessed} documentos.");
                 
         } catch (\Exception $e) {
-            return back()->withErrors(['csv_file' => $e->getMessage()]);
+            dd($e->getMessage(), $e->getFile(), $e->getLine());
         }
     }
 
