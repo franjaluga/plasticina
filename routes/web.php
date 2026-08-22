@@ -8,7 +8,15 @@ use App\Models\VCDocuments\VCDocument;
 
 Route::get('/', function (OwnerService $ownerService) {
     $activeOwner = $ownerService->getActiveOwner();
-    $pendingCount = VCDocument::doesntHave('journal')->count();
+    $workingYear = session('working_year', date('Y'));
+
+    $pendingCount = 0;
+    if ($activeOwner) {
+        $pendingCount = VCDocument::where('owner_id', $activeOwner->id)
+            ->where('year_register', $workingYear)
+            ->doesntHave('journal')
+            ->count();
+    }
 
     return view('welcome', compact('activeOwner', 'pendingCount'));
 });

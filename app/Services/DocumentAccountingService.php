@@ -88,11 +88,13 @@ class DocumentAccountingService
     public function getPendingDocuments(): Collection
     {
         $activeOwner = app(OwnerService::class)->getActiveOwner();
+        $workingYear = session('working_year', date('Y'));
 
         return VCDocument::where('owner_id', $activeOwner?->id)
+            ->where('year_register', $workingYear)
             ->doesntHave('journal')
-            ->orderBy('year_register', 'desc')
             ->orderBy('month_register', 'desc')
+            ->orderBy('date', 'desc')
             ->get();
     }
 }
