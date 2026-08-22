@@ -4,7 +4,9 @@ namespace App\Http\Controllers\VCDocuments;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreVCDocumentRequest;
+use App\Models\VCDocuments\VCDocument; // Obligatorio importar el modelo
 use App\Services\VCDocumentService;
+use App\Services\JournalService; // Importamos el servicio de contabilidad
 use Illuminate\Http\Request;
 
 class VCDocumentController extends Controller
@@ -68,5 +70,48 @@ class VCDocumentController extends Controller
         } catch (\Exception $e) {
             return back()->withErrors(['csv_file' => $e->getMessage()]);
         }
+    }
+
+    public function pendingList()
+    {
+        $documents = VCDocument::doesntHave('journal')->get();
+
+        return view('vc_documents.pending', compact('documents'));
+    }
+
+    public function batchContabilizar(Request $request, JournalService $journalService)
+    {
+        $request->validate([
+            'document_ids' => 'required|array',
+            'document_ids.*' => 'exists:vc_documents,id',
+        ]);
+
+        $successCount = 0;
+        $errorMessages = [];
+
+        $accountMapping = [
+            'net'     => ['account_code' => '110101', 'type' => 'debit'],
+            'vat_rec' => ['account_code' => '110201', 'type' => 'debit'],
+            'total'   => ['account_code' => '210101', 'type' => 'credit'],
+        ];
+
+        foreach ($request->document_ids as $id) {
+            $document = VCDocument::find($id);
+            
+            try {
+                $journalService->registerDocumentJournal($document, $accountMapping);
+                $successCount++;
+            } catch (\Exception $e) {
+                $errorMessages[] = "Doc ID {$id}: " . $e->getMessage();
+            }
+        }
+
+        $redirect = back()->with('success', "Se contabilizaron exitosamente {$successCount} documentos.");
+
+        if (!empty($errorMessages)) {
+            $redirect->withErrors(['batch_errors' => implode(' | ', $errorMessages)]);
+        }
+
+        return $redirect;
     }
 }

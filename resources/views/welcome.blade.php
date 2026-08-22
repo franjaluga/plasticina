@@ -30,6 +30,25 @@
             </div>
         </div>
 
+        <!-- Alerta / Aviso de Documentos Pendientes de Contabilizar -->
+        @if(isset($pendingCount) && $pendingCount > 0)
+            <div class="mb-6 p-3 bg-amber-50 border border-amber-200 rounded-md flex items-center justify-between text-amber-800">
+                <div class="text-left text-sm">
+                    <span class="font-semibold block">¡Atención!</span>
+                    Tienes <span class="font-bold">{{ $pendingCount }}</span> documento(s) sin contabilizar.
+                </div>
+                <div>
+                    <a href="{{ route('vc_documents.pending') }}" class="text-xs bg-amber-600 text-white px-3 py-1.5 rounded hover:bg-amber-700 transition font-medium whitespace-nowrap">
+                        Contabilizar
+                    </a>
+                </div>
+            </div>
+        @else
+            <div class="mb-6 p-3 bg-green-50 border border-green-200 rounded-md text-green-800 text-xs text-left">
+                ✓ Todos los documentos se encuentran contabilizados.
+            </div>
+        @endif
+
         <h1 class="text-2xl font-bold text-gray-800 mb-2">Sistema de Documentos V/C</h1>
         <p class="text-gray-600 mb-6">Gestión de registros de ventas y compras</p>
 

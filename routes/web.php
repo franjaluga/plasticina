@@ -4,10 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VCDocuments\VCDocumentController;
 use App\Http\Controllers\Owners\OwnerController;
 use App\Services\OwnerService;
+use App\Models\VCDocuments\VCDocument;
 
 Route::get('/', function (OwnerService $ownerService) {
     $activeOwner = $ownerService->getActiveOwner();
-    return view('welcome', compact('activeOwner'));
+    $pendingCount = VCDocument::doesntHave('journal')->count();
+
+    return view('welcome', compact('activeOwner', 'pendingCount'));
 });
 
 // OWNERS (EMPRESAS)
@@ -31,4 +34,10 @@ Route::post('/vc_documents', [VCDocumentController::class, 'store'])
 Route::post('/vc_documents/csv', [VCDocumentController::class, 'csvImport'])
      ->name('vc_documents.csv');
 
-     
+// Listado de documentos pendientes de contabilizar
+Route::get('/vc-documents/pendientes', [VCDocumentController::class, 'pendingList'])
+     ->name('vc_documents.pending');
+
+// Contabilización masiva (lote)
+Route::post('/vc-documents/contabilizar-masivo', [VCDocumentController::class, 'batchContabilizar'])
+     ->name('vc_documents.batch_contabilizar');

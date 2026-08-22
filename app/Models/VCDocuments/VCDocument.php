@@ -3,6 +3,7 @@
 namespace App\Models\VCDocuments;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Accounting\Journal;
 
 class VCDocument extends Model
 {
@@ -31,4 +32,9 @@ class VCDocument extends Model
         'total',
         'owner_id'
     ];
+
+    public function journal()
+    {
+        return $this->hasOne(Journal::class, 'vc_document_id');
+    }
 }
