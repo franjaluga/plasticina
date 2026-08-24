@@ -31,12 +31,12 @@ class PaymentService
 
         $documents = VCDocument::where('owner_id', $activeOwner->id)
             ->where('year_register', $workingYear)
+            ->has('journal')
             ->get();
 
         return $documents->filter(function ($doc) use ($activeOwner) {
             $totalDoc = (float) $doc->total;
             
-            // Calculamos lo pagado buscando en los asientos manuales cuyo monto total o detalle corresponda al documento
             $paidAmount = $this->calculatePaidAmount($doc, $activeOwner->id);
             $balance = $totalDoc - $paidAmount;
 
