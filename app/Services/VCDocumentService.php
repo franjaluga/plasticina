@@ -246,4 +246,13 @@ class VCDocumentService
 
         return $calculatedTotal === $total;
     }
+
+    public function getJournalBookByDateRange(int $ownerId, int $workingYear, string $startDate, string $endDate)
+    {
+        return VCDocument::where('owner_id', $ownerId)
+            ->where('year_register', $workingYear)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->with('journal.entries.account')
+            ->get();
+    }
 }

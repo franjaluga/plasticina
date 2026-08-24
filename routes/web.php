@@ -147,3 +147,13 @@ Route::get('/accounting/journals/{id}/detail', [AccountingReportController::clas
 // ANALÍTICOS (Consulta V/C + Libro Mayor)
 Route::get('/accounting/analytics', [AccountingReportController::class, 'analyticsIndex'])
     ->name('accounting.analytics');
+
+
+// Mostrar el formulario de selección de fechas para el Libro Diario V/C
+Route::get('/vc-documents/libro-diario/rango', function () {
+    return view('reports.journal_date_range');
+})->name('vc_documents.journal_book.form');
+
+// La ruta que procesará el reporte utilizando el servicio
+Route::get('/vc-documents/libro-diario/generar', [VCDocumentController::class, 'journalBook'])
+    ->name('vc_documents.journal_book.generate');

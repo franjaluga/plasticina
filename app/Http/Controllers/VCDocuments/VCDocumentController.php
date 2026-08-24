@@ -12,6 +12,7 @@ use App\Services\DocumentAccountingService;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Services\BooksToCsv;
 use App\Models\Accounts\Account;
+use App\Services\OwnerService;
 
 class VCDocumentController extends Controller
 {
@@ -102,13 +103,32 @@ class VCDocumentController extends Controller
         return back()->with('success', "Se procesaron correctamente {$result['success_count']} documentos.");
     }
 
-    public function journalBook(DocumentAccountingService $accountingService)
+    public function journalBook(Request $request, VCDocumentService $vcDocumentService, \App\Services\OwnerService $ownerService)
     {
-        $year = session('working_year', date('Y'));
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
-        $journals = $accountingService->getJournalBookRecords((int) $year);
+        $activeOwner = $ownerService->getActiveOwner();
+        $workingYear = (int) session('working_year', date('Y'));
 
-        return view('vc_documents.journal_book', compact('journals', 'year'));
+        if (!$startDate || !$endDate) {
+            return redirect()->route('vc_documents.journal_book.form')
+                ->withErrors(['error' => 'Debe seleccionar un rango de fechas válido.']);
+        }
+
+        $documents = $vcDocumentService->getJournalBookByDateRange(
+            $activeOwner->id, 
+            $workingYear, 
+            $startDate, 
+            $endDate
+        );
+
+        // Extraemos los asientos (journals) que tengan los documentos para que la vista los lea con la variable $journals
+        $journals = $documents->map(function($doc) {
+            return $doc->journal;
+        })->filter(); // Filtramos por si hay documentos sin asiento
+
+        return view('vc_documents.journal_book', compact('journals', 'startDate', 'endDate'));
     }
 
     public function exportCsv(BooksToCsv $csvService): StreamedResponse
