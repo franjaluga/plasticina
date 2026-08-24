@@ -84,6 +84,16 @@ class PaymentService
             $document = VCDocument::findOrFail($documentId);
             $tipo = strtoupper(trim($document->type_vc ?? 'C'));
 
+            // --- VALIDACIÓN DE SALDO MÁXIMO ---
+            $totalDoc = (float) $document->total;
+            $paidAmount = $this->calculatePaidAmount($document, $activeOwner->id);
+            $balance = round($totalDoc - $paidAmount, 2);
+
+            if (round($amount, 2) > $balance) {
+                throw new Exception("El monto ingresado ({$amount}) excede el saldo pendiente del documento ({$balance}).");
+            }
+            // ---------------------------------
+
             $year = date('Y', strtotime($date));
             $month = date('n', strtotime($date));
             

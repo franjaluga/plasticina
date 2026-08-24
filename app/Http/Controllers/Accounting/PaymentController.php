@@ -48,7 +48,7 @@ class PaymentController extends Controller
 
             return back()->with('success', 'Pago/Cobro procesado y registrado contablemente con éxito.');
         } catch (Exception $e) {
-            return back()->withInput()->with('error', 'Error al procesar el pago: ' . $e->getMessage());
+            return back()->withInput()->with('error', $e->getMessage()); // Muestra el mensaje exacto del saldo excedido
         }
     }
 }
