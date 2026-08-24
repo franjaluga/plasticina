@@ -5,6 +5,7 @@ use App\Http\Controllers\VCDocuments\VCDocumentController;
 use App\Http\Controllers\Owners\OwnerController;
 use App\Services\OwnerService;
 use App\Models\VCDocuments\VCDocument;
+use App\Models\Accounts\Account;
 use App\Http\Controllers\Accounting\AccountingReportController;
 use App\Http\Controllers\Accounting\RetrievalDocumentController;
 use App\Http\Controllers\Accounting\DocumentQueryController;
@@ -12,7 +13,6 @@ use App\Http\Controllers\Accounting\LedgerController;
 use App\Http\Controllers\Accounting\ManualJournalController;
 use App\Http\Controllers\Accounting\AuditController;
 use App\Http\Controllers\Accounting\PaymentController;
-
 
 Route::get('/', function (OwnerService $ownerService) {
     $activeOwner = $ownerService->getActiveOwner();
@@ -36,27 +36,62 @@ Route::post('/period/update', function (\Illuminate\Http\Request $request) {
     return back()->with('success', 'Año de trabajo actualizado.');
 })->name('period.update');
 
-
 // OWNERS (EMPRESAS)
 Route::resource('owners', OwnerController::class)->except(['show', 'create', 'edit']);
 Route::patch('owners/{owner}/activate', [OwnerController::class, 'activate'])->name('owners.activate');
 
-// VIA FORMULARIO
+
+/* ==========================================================
+   AGRUPACIÓN 1: INGRESO MANUAL (V/C + Asientos Manuales)
+   ================================================---------- */
+Route::get('/ingress/manual', function () {
+    return view('ingress.manual_index');
+})->name('ingress.manual');
+
+// V/C Formulario Individual
 Route::get('/vc-documents/create', [VCDocumentController::class, 'create'])->name('vc_documents.create');
 Route::post('/vc-documents', [VCDocumentController::class, 'store'])->name('vc_documents.store');
 Route::get('/vc-documents/check-entity/{rut}', [VCDocumentController::class, 'checkEntity']);
 Route::get('/vc-documents/check-doctype/{doctype}', [VCDocumentController::class, 'checkDocumentType']);
 
-// VIA CSV
-Route::get('/vc_documents/upload', function () {
-    return view('vc_documents.upload');
-})->name('vc_documents.upload'); 
+// Asientos Manuales
+Route::get('/accounting/manual-journals/create', [ManualJournalController::class, 'create'])
+    ->name('accounting.manual_journals.create');
+Route::post('/accounting/manual-journals', [ManualJournalController::class, 'store'])
+    ->name('accounting.manual_journals.store');
 
-Route::post('/vc_documents', [VCDocumentController::class, 'store'])
-     ->name('vc_documents.store');
-     
+
+/* ==========================================================
+   AGRUPACIÓN 2: IMPORTADOR (CSV)
+   ================================================---------- */
+Route::get('/ingress/import', function () {
+    return view('vc_documents.upload');
+})->name('ingress.import'); 
+
 Route::post('/vc_documents/csv', [VCDocumentController::class, 'csvImport'])
      ->name('vc_documents.csv');
+
+
+/* ==========================================================
+   AGRUPACIÓN 3: REPORTES Y ANÁLISIS 
+   ================================================---------- */
+Route::get('/reports/analytics', function () {
+    return view('ingress.analytics_index');
+})->name('reports.analytics');
+
+// NUEVAS RUTAS DE CONTEXTO (Libro Diario, Balance, Libro Mayor)
+Route::get('/reports/journal-context', function () {
+    return view('reports.journal_context');
+})->name('reports.journal_context');
+
+Route::get('/reports/balance-context', function () {
+    return view('reports.balance_context');
+})->name('reports.balance_context');
+
+Route::get('/reports/ledger-context', function () {
+    $accounts = Account::orderBy('code', 'asc')->get();
+    return view('reports.ledger_context', compact('accounts'));
+})->name('reports.ledger_context');
 
 // Listado de documentos pendientes de contabilizar
 Route::get('/vc-documents/pendientes', [VCDocumentController::class, 'pendingList'])
@@ -66,57 +101,49 @@ Route::get('/vc-documents/pendientes', [VCDocumentController::class, 'pendingLis
 Route::post('/vc-documents/contabilizar-masivo', [VCDocumentController::class, 'batchContabilizar'])
      ->name('vc_documents.batch_contabilizar');
 
-// Libro Diario Contable
+// Libro Diario Contable V/C
 Route::get('/vc-documents/libro-diario', [VCDocumentController::class, 'journalBook'])
      ->name('vc_documents.journal_book');
      
-// exportarlo a csv
+// Exportar a CSV Libro Diario
 Route::get('/vc-documents/libro-diario/export-csv', [VCDocumentController::class, 'exportCsv'])
     ->name('vc_documents.export_csv');
 
-// BALANCE
+// Balance Tributario y reportes generales
 Route::get('/vc-documents/balance-tributario', [AccountingReportController::class, 'taxBalance'])
     ->name('vc_documents.tax_balance');
 
 Route::get('/accounting/reports', [AccountingReportController::class, 'index'])
     ->name('accounting.reports.index');
 
-// CONSULTA DE DOCUMENTOS (Debe ir antes de la ruta con {id})
+// Consulta de Documentos
 Route::get('/accounting/documents/query', [DocumentQueryController::class, 'index'])
     ->name('vc_documents.query');
 
-// RECUPERAR DOCUMENTO
+// Recuperar Documento
 Route::get('/accounting/documents/{id}', [RetrievalDocumentController::class, 'show'])
     ->name('accounting.documents.detail');
 
-// MAYOR
+// Mayor Contable
 Route::get('/accounting/ledger', [LedgerController::class, 'index'])
     ->name('accounting.ledger');
 
-// MANUAL JOURNAL
-Route::get('/accounting/manual-journals/create', [ManualJournalController::class, 'create'])
-    ->name('accounting.manual_journals.create');
-
-Route::post('/accounting/manual-journals', [ManualJournalController::class, 'store'])
-    ->name('accounting.manual_journals.store');
-
-// AUDITORIA
+// Auditoría V/C y Borrado
 Route::get('/accounting/reports/audit', [AuditController::class, 'index'])->name('accounting.reports.audit');
-
-// BORRADO
 Route::delete('/accounting/journals/{journal}', [AuditController::class, 'destroy'])->name('accounting.journals.destroy');
+Route::delete('/accounting/audit/{journal}', [AuditController::class, 'destroy'])->name('accounting.audit.destroy');
 
-// COBROS Y PAGOS
+// Cobros y Pagos
 Route::get('/accounting/payments', [PaymentController::class, 'index'])->name('accounting.payments.index');
 Route::post('/accounting/payments', [PaymentController::class, 'store'])->name('accounting.payments.store');
 
-// LIBRO DIARIO
+// Asientos del Sistema (Libro Diario General)
 Route::get('/accounting/system-journals', [AccountingReportController::class, 'systemJournalsIndex'])
     ->name('accounting.system_journals');
 
 Route::get('/accounting/journals/{id}/detail', [AccountingReportController::class, 'showJournalDetail'])
     ->name('accounting.journals.detail');
-    
-// ELiminar asientos diario
-Route::delete('/accounting/audit/{journal}', [AuditController::class, 'destroy'])
-    ->name('accounting.audit.destroy');
+
+// ANALÍTICOS (Consulta V/C + Libro Mayor)
+Route::get('/accounting/analytics', [AccountingReportController::class, 'analyticsIndex'])
+    ->name('accounting.analytics');

@@ -19,7 +19,7 @@
                 </p>
             </div>
             <div>
-                <a href="{{ route('welcome') }}" class="text-xs font-semibold bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition">
+                <a href="{{ route('reports.analytics') }}" class="text-xs font-semibold bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition">
                     &larr; Volver
                 </a>
             </div>
@@ -43,7 +43,7 @@
             </a>
 
             <!-- Botón 2: Balance Tributario -->
-            <a href="{{ route('vc_documents.tax_balance') }}" class="group p-5 bg-white border border-slate-200 rounded-xl hover:border-indigo-500 hover:shadow-md transition text-left flex flex-col justify-between">
+            <a href="{{ route('vc_documents.tax_balance') }}" class="group p-5 bg-white border border-slate-200 rounded-2xl hover:border-indigo-500 hover:shadow-md transition text-left flex flex-col justify-between">
                 <div>
                     <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3 group-hover:bg-indigo-600 group-hover:text-white transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
@@ -55,97 +55,6 @@
                     Generar &rarr;
                 </span>
             </a>
-
-            <!-- NUEVA TARJETA: Consulta de Compras / Ventas por Mes y Año -->
-            <div class="md:col-span-2 p-5 bg-slate-50 border border-slate-200 rounded-xl">
-                <div class="flex items-center mb-3">
-                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mr-3">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                    </div>
-                    <div>
-                        <h2 class="font-bold text-slate-800 text-base">Consulta de Compras o Ventas</h2>
-                        <p class="text-xs text-slate-500">Filtra los documentos específicos seleccionando tipo, mes y año.</p>
-                    </div>
-                </div>
-
-                <!-- Formulario de Consulta -->
-                <form action="{{ route('vc_documents.query') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-4">
-                    <div>
-                        <label for="type_vc" class="block text-xs font-semibold text-slate-600 mb-1">Tipo de Documento</label>
-                        <select name="type_vc" id="type_vc" class="w-full text-xs rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 bg-white border" required>
-                            <option value="V">Venta</option>
-                            <option value="C">Compra</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="month" class="block text-xs font-semibold text-slate-600 mb-1">Mes</label>
-                        <select name="month" id="month" class="w-full text-xs rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 bg-white border" required>
-                            @for($m = 1; $m <= 12; $m++)
-                                <option value="{{ $m }}" {{ (request('month', date('n')) == $m) ? 'selected' : '' }}>
-                                    {{ $m }} - {{ ucfirst(\Carbon\Carbon::create()->month($m)->translatedFormat('F')) }}
-                                </option>
-                            @endfor
-                        </select>
-                    </div>
-                    <div>
-                        <label for="year" class="block text-xs font-semibold text-slate-600 mb-1">Año</label>
-                        <input type="number" name="year" id="year" value="{{ session('working_year', date('Y')) }}" class="w-full text-xs rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 bg-white border" required>
-                    </div>
-                    <div class="flex items-end">
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2.5 px-4 rounded-lg shadow-sm transition flex items-center justify-center">
-                            Consultar &rarr;
-                        </button>
-                    </div>
-                </form>
-            </div>
-
-            <!-- TARJETA: Libro Mayor -->
-            <div class="md:col-span-2 p-5 bg-slate-50 border border-slate-200 rounded-xl">
-                <div class="flex items-center mb-3">
-                    <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center mr-3">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                    </div>
-                    <div>
-                        <h2 class="font-bold text-slate-800 text-base">Libro Mayor por Cuenta</h2>
-                        <p class="text-xs text-slate-500">Consulta los movimientos detallados y saldo de una cuenta contable específica.</p>
-                    </div>
-                </div>
-
-                <!-- Formulario Libro Mayor con Datalist -->
-                <form action="{{ route('accounting.ledger') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-4">
-                    <div>
-                        <label for="account_code" class="block text-xs font-semibold text-slate-600 mb-1">N° de Cuenta</label>
-                        <input type="text" name="account_code" id="account_code" value="{{ request('account_code') }}" list="accounts_list" placeholder="Seleccione o escriba código" autocomplete="off" class="w-full text-xs rounded-lg border-slate-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 p-2 bg-white border" required>
-                        
-                        <!-- Datalist poblado dinámicamente desde el modelo Account -->
-                        <datalist id="accounts_list">
-                            @foreach($accounts as $acc)
-                                <option value="{{ $acc->code }}">{{ $acc->name }}</option>
-                            @endforeach
-                        </datalist>
-                    </div>
-                    <div>
-                        <label for="ledger_month" class="block text-xs font-semibold text-slate-600 mb-1">Mes</label>
-                        <select name="month" id="ledger_month" class="w-full text-xs rounded-lg border-slate-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 p-2 bg-white border" required>
-                            @for($m = 1; $m <= 12; $m++)
-                                <option value="{{ $m }}" {{ (request('month', date('n')) == $m) ? 'selected' : '' }}>
-                                    {{ $m }} - {{ ucfirst(\Carbon\Carbon::create()->month($m)->translatedFormat('F')) }}
-                                </option>
-                            @endfor
-                        </select>
-                    </div>
-                    <div>
-                        <label for="ledger_year" class="block text-xs font-semibold text-slate-600 mb-1">Año</label>
-                        <input type="number" name="year" id="ledger_year" value="{{ session('working_year', date('Y')) }}" class="w-full text-xs rounded-lg border-slate-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 p-2 bg-white border" required>
-                    </div>
-                    <div class="flex items-end">
-                        <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs py-2.5 px-4 rounded-lg shadow-sm transition flex items-center justify-center">
-                            Generar Mayor &rarr;
-                        </button>
-                    </div>
-                </form>
-            </div>
-
             
         </div>
 

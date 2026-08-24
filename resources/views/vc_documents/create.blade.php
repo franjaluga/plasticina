@@ -15,7 +15,7 @@
                 {{ __('Ingresar Documento V/C') }}
             </h2>
             <div>
-                <a href="{{ url('/') }}" class="text-xs font-semibold bg-gray-100 text-gray-700 px-3.5 py-2 rounded-lg hover:bg-gray-200 transition shadow-sm">
+                <a href="{{ route('ingress.manual') }}" class="text-xs font-semibold bg-gray-100 text-gray-700 px-3.5 py-2 rounded-lg hover:bg-gray-200 transition shadow-sm">
                     &larr; Volver al Inicio
                 </a>
             </div>

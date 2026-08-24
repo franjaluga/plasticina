@@ -84,104 +84,48 @@
             <p class="text-sm text-slate-500 mt-1">Selecciona una opción para gestionar tu contabilidad</p>
         </div>
 
-        <!-- Grilla Uniforme de 3 Columnas para todos los Módulos -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- 3 Botones Principales -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             
-            <!-- 1. Registros V/C -->
-            <a href="{{ route('vc_documents.create') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-indigo-500 hover:shadow-lg transition text-left flex flex-col justify-between">
+            <!-- 1. Ingreso Manual (Agrupa Registros V/C y Asiento Manual) -->
+            <a href="{{ route('ingress.manual') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-indigo-500 hover:shadow-lg transition text-left flex flex-col justify-between">
                 <div>
                     <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                     </div>
-                    <h2 class="font-bold text-slate-800 group-hover:text-indigo-600 transition text-base mb-1">1. Registros V/C</h2>
-                    <p class="text-xs text-slate-500 leading-relaxed">Registra de forma individual tus compras o ventas.</p>
+                    <h2 class="font-bold text-slate-800 group-hover:text-indigo-600 transition text-base mb-1">1. Ingreso Manual</h2>
+                    <p class="text-xs text-slate-500 leading-relaxed">Registro individual de documentos V/C y creación de asientos contables.</p>
                 </div>
                 <span class="text-xs font-semibold text-indigo-600 mt-6 flex items-center">
-                    Ingresar &rarr;
+                    Acceder &rarr;
                 </span>
             </a>
 
-            <!-- 2. Importadores -->
-            <a href="{{ route('vc_documents.upload') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-indigo-500 hover:shadow-lg transition text-left flex flex-col justify-between">
+            <!-- 2. Importadores (Apunta a ingress.import) -->
+            <a href="{{ route('ingress.import') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-green-500 hover:shadow-lg transition text-left flex flex-col justify-between">
                 <div>
-                    <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition">
+                    <div class="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center mb-4 group-hover:bg-green-600 group-hover:text-white transition">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                     </div>
-                    <h2 class="font-bold text-slate-800 group-hover:text-indigo-600 transition text-base mb-1">2. Importadores</h2>
-                    <p class="text-xs text-slate-500 leading-relaxed">Carga masiva de documentos mediante archivos.</p>
+                    <h2 class="font-bold text-slate-800 group-hover:text-green-600 transition text-base mb-1">2. Importador</h2>
+                    <p class="text-xs text-slate-500 leading-relaxed">Carga masiva de documentos mediante archivos CSV.</p>
                 </div>
-                <span class="text-xs font-semibold text-indigo-600 mt-6 flex items-center">
+                <span class="text-xs font-semibold text-green-600 mt-6 flex items-center">
                     Cargar &rarr;
                 </span>
             </a>
 
-            <!-- 3. Asiento Manual -->
-            <a href="{{ route('accounting.manual_journals.create') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-amber-500 hover:shadow-lg transition text-left flex flex-col justify-between">
-                <div>
-                    <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4 group-hover:bg-amber-600 group-hover:text-white transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                    </div>
-                    <h2 class="font-bold text-slate-800 group-hover:text-amber-600 transition text-base mb-1">3. Asiento Manual</h2>
-                    <p class="text-xs text-slate-500 leading-relaxed">Crea comprobantes contables directos sin documentos.</p>
-                </div>
-                <span class="text-xs font-semibold text-amber-600 mt-6 flex items-center">
-                    Crear &rarr;
-                </span>
-            </a>
-
-            <!-- 4. Reportes Contables -->
-            <a href="{{ route('accounting.reports.index') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-emerald-500 hover:shadow-lg transition text-left flex flex-col justify-between">
-                <div>
-                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 group-hover:bg-emerald-600 group-hover:text-white transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    </div>
-                    <h2 class="font-bold text-slate-800 group-hover:text-emerald-600 transition text-base mb-1">4. Reportes</h2>
-                    <p class="text-xs text-slate-500 leading-relaxed">Consulta libro diario, mayor, balance de 8 columnas y más.</p>
-                </div>
-                <span class="text-xs font-semibold text-emerald-600 mt-6 flex items-center">
-                    Ver reportes &rarr;
-                </span>
-            </a>
-
-            <!-- 5. Auditoría de Documentos -->
-            <a href="{{ route('accounting.reports.audit') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-sky-500 hover:shadow-lg transition text-left flex flex-col justify-between">
-                <div>
-                    <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-4 group-hover:bg-sky-600 group-hover:text-white transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012-2m-6 9l2 2 4-4"></path></svg>
-                    </div>
-                    <h2 class="font-bold text-slate-800 group-hover:text-sky-600 transition text-base mb-1">5. Auditoría V/C</h2>
-                    <p class="text-xs text-slate-500 leading-relaxed">Revisa los asientos contables y sus referencias asociadas.</p>
-                </div>
-                <span class="text-xs font-semibold text-sky-600 mt-6 flex items-center">
-                    Auditar &rarr;
-                </span>
-            </a>
-
-            <!-- 6. Gestión de Cobros y Pagos -->
-            <a href="{{ route('accounting.payments.index') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-purple-500 hover:shadow-lg transition text-left flex flex-col justify-between">
+            <!-- 3. Reportes y Análisis (Agrupa Reportes, Auditoría, Cobros/Pagos y Asientos del Sistema) -->
+            <a href="{{ route('reports.analytics') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-purple-500 hover:shadow-lg transition text-left flex flex-col justify-between">
                 <div>
                     <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-4 group-hover:bg-purple-600 group-hover:text-white transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                     </div>
-                    <h2 class="font-bold text-slate-800 group-hover:text-purple-600 transition text-base mb-1">6. Cobros y Pagos</h2>
-                    <p class="text-xs text-slate-500 leading-relaxed">Gestiona saldos pendientes aplicando cobros y pagos.</p>
+                    <h2 class="font-bold text-slate-800 group-hover:text-purple-600 transition text-base mb-1">3. Reportes y Análisis</h2>
+                    <p class="text-xs text-slate-500 leading-relaxed">Balances, auditoría V/C, cobros y pagos y asientos del sistema.</p>
                 </div>
                 <span class="text-xs font-semibold text-purple-600 mt-6 flex items-center">
-                    Gestionar &rarr;
-                </span>
-            </a>
-
-            <!-- 7. Listado de Asientos Contables (Nuevo) -->
-            <a href="{{ route('accounting.system_journals') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-teal-500 hover:shadow-lg transition text-left flex flex-col justify-between">
-                <div>
-                    <div class="w-12 h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center mb-4 group-hover:bg-teal-600 group-hover:text-white transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-                    </div>
-                    <h2 class="font-bold text-slate-800 group-hover:text-teal-600 transition text-base mb-1">7. Asientos del Sistema</h2>
-                    <p class="text-xs text-slate-500 leading-relaxed">Visualiza y administra todos los asientos contables en formato de tabla.</p>
-                </div>
-                <span class="text-xs font-semibold text-teal-600 mt-6 flex items-center">
-                    Ver asientos &rarr;
+                    Ver módulos &rarr;
                 </span>
             </a>
 

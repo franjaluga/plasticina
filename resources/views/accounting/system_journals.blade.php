@@ -13,7 +13,7 @@
             <p class="text-muted mb-0">Periodo tributario año: <span class="fw-bold text-primary">{{ $year }}</span></p>
         </div>
         <div>
-            <a href="{{ route('accounting.reports.index') }}" class="btn btn-outline-secondary btn-sm">
+            <a href="{{ route('reports.journal_context') }}" class="text-xs font-semibold bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition">
                 &larr; Volver
             </a>
         </div>

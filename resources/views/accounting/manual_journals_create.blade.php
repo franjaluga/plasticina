@@ -15,7 +15,7 @@
             <p class="text-xs text-gray-600 font-mono mt-0.5">Registro de comprobante directo</p>
         </div>
         <div>
-            <a href="{{ route('accounting.reports.index') }}" class="text-xs font-medium text-black border border-gray-300 px-2.5 py-1 rounded">
+            <a href="{{ route('ingress.manual') }}" class="text-xs font-medium text-black border border-gray-300 px-2.5 py-1 rounded">
                 &larr; Volver
             </a>
         </div>

@@ -17,8 +17,8 @@
                 <p class="text-sm text-slate-500 mt-1">Owner: <span class="font-bold text-slate-700">{{ $activeOwner?->name ?? 'N/A' }}</span></p>
             </div>
             <div>
-                <a href="{{ route('accounting.reports.index') }}" class="text-xs font-semibold bg-slate-100 text-slate-700 px-4 py-2 rounded-xl hover:bg-slate-200 transition shadow-sm">
-                    &larr; Volver a Reportes / Menú
+                <a href="{{ route('reports.analytics') }}" class="text-xs font-semibold bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition">
+                    &larr; Volver
                 </a>
             </div>
         </div>

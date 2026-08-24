@@ -52,4 +52,11 @@ class AccountingReportController extends Controller
 
         return view('accounting.journal_detail', compact('journal'));
     }
+
+    public function analyticsIndex()
+    {
+        $accounts = Account::orderBy('code', 'asc')->get();
+
+        return view('accounting.analytics', compact('accounts'));
+    }
 }

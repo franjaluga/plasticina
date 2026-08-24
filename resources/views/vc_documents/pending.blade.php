@@ -13,7 +13,7 @@
             <p class="text-muted mb-0">Periodo tributario año: <span class="fw-bold text-primary">{{ session('working_year', date('Y')) }}</span></p>
         </div>
         <div>
-            <a href="{{ route('welcome') }}" class="text-xs font-semibold bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition">
+            <a href="{{ route('reports.analytics') }}" class="text-xs font-semibold bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg hover:bg-slate-200 transition">
                 &larr; Volver
             </a>
         </div>
