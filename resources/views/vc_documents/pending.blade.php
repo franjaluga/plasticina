@@ -45,7 +45,7 @@
                         Cuenta Contable para el Neto <small class="text-muted">(Seleccione o escriba el código)</small>
                     </label>
                     <div class="input-group">
-                        <input type="text" name="custom_net_account" id="custom_net_account" class="form-control" list="accounts_list" placeholder="Ej: Seleccione o escriba código" autocomplete="off">
+                        <input type="text" name="custom_net_account" id="custom_net_account" class="form-control" list="accounts_list" placeholder="Ej: Seleccione o escriba código" autocomplete="off" required>
                         
                         <!-- Datalist poblado dinámicamente desde el modelo Account -->
                         <datalist id="accounts_list">
