@@ -109,3 +109,14 @@ Route::delete('/accounting/journals/{journal}', [AuditController::class, 'destro
 // COBROS Y PAGOS
 Route::get('/accounting/payments', [PaymentController::class, 'index'])->name('accounting.payments.index');
 Route::post('/accounting/payments', [PaymentController::class, 'store'])->name('accounting.payments.store');
+
+// LIBRO DIARIO
+Route::get('/accounting/system-journals', [AccountingReportController::class, 'systemJournalsIndex'])
+    ->name('accounting.system_journals');
+
+Route::get('/accounting/journals/{id}/detail', [AccountingReportController::class, 'showJournalDetail'])
+    ->name('accounting.journals.detail');
+    
+// ELiminar asientos diario
+Route::delete('/accounting/audit/{journal}', [AuditController::class, 'destroy'])
+    ->name('accounting.audit.destroy');

@@ -28,16 +28,19 @@ class AuditController extends Controller
     public function destroy(Journal $journal)
     {
         try {
-            // Si el asiento está amarrado a un documento, borramos el documento (lo que eliminará el asiento en cascada)
-            if ($journal->document) {
-                $journal->document->delete();
-            } else {
-                // Si es asiento manual puro sin documento, borramos el asiento y sus líneas de detalle
-                $journal->entries()->delete();
-                $journal->delete();
-            }
+            \DB::transaction(function () use ($journal) {
+                if ($journal->document) {
+                    $journal->document->delete();
+                } else {
+                    $journal->entries()->delete();
+                    $journal->delete();
+                }
+            });
 
-            return back()->with('success', 'Registro eliminado exitosamente.');
+            // Redirección explícita al listado general de asientos del sistema
+            return redirect()->route('accounting.system_journals')
+                ->with('success', 'Asiento contable y su documento asociado eliminados exitosamente.');
+                
         } catch (\Exception $e) {
             return back()->with('error', 'Error al eliminar el registro: ' . $e->getMessage());
         }

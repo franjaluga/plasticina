@@ -81,13 +81,13 @@
         <!-- Encabezado de la vista -->
         <div class="text-center mb-8">
             <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Sistema Contable</h1>
-            <p class="text-sm text-slate-500 mt-1">Selecciona una categoría para comenzar a gestionar la contabilidad</p>
+            <p class="text-sm text-slate-500 mt-1">Selecciona una opción para gestionar tu contabilidad</p>
         </div>
 
-        <!-- Grilla de 4 columnas para los módulos principales -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Grilla Uniforme de 3 Columnas para todos los Módulos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             
-            <!-- Bloque 1: Registros Manuales -->
+            <!-- 1. Registros V/C -->
             <a href="{{ route('vc_documents.create') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-indigo-500 hover:shadow-lg transition text-left flex flex-col justify-between">
                 <div>
                     <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition">
@@ -101,7 +101,7 @@
                 </span>
             </a>
 
-            <!-- Bloque 2: Importadores -->
+            <!-- 2. Importadores -->
             <a href="{{ route('vc_documents.upload') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-indigo-500 hover:shadow-lg transition text-left flex flex-col justify-between">
                 <div>
                     <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition">
@@ -115,7 +115,7 @@
                 </span>
             </a>
 
-            <!-- Bloque 3: Asiento Manual Directo -->
+            <!-- 3. Asiento Manual -->
             <a href="{{ route('accounting.manual_journals.create') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-amber-500 hover:shadow-lg transition text-left flex flex-col justify-between">
                 <div>
                     <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4 group-hover:bg-amber-600 group-hover:text-white transition">
@@ -129,7 +129,7 @@
                 </span>
             </a>
 
-            <!-- Bloque 4: Reportes Contables -->
+            <!-- 4. Reportes Contables -->
             <a href="{{ route('accounting.reports.index') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-emerald-500 hover:shadow-lg transition text-left flex flex-col justify-between">
                 <div>
                     <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 group-hover:bg-emerald-600 group-hover:text-white transition">
@@ -143,42 +143,48 @@
                 </span>
             </a>
 
-        </div>
-
-        <!-- Fila Siguiente: Bloque 5 - Auditoría de Documentos -->
-        <div class="mt-6">
-            <a href="{{ route('accounting.reports.audit') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-sky-500 hover:shadow-lg transition text-left flex items-center justify-between">
-                <div class="flex items-center space-x-4">
-                    <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center group-hover:bg-sky-600 group-hover:text-white transition">
+            <!-- 5. Auditoría de Documentos -->
+            <a href="{{ route('accounting.reports.audit') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-sky-500 hover:shadow-lg transition text-left flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center mb-4 group-hover:bg-sky-600 group-hover:text-white transition">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012-2m-6 9l2 2 4-4"></path></svg>
                     </div>
-                    <div>
-                        <h2 class="font-bold text-slate-800 group-hover:text-sky-600 transition text-base mb-0.5">5. Auditoría de Documentos</h2>
-                        <p class="text-xs text-slate-500">Revisa los asientos contables y sus referencias asociadas (folio y RUT del documento).</p>
-                    </div>
+                    <h2 class="font-bold text-slate-800 group-hover:text-sky-600 transition text-base mb-1">5. Auditoría V/C</h2>
+                    <p class="text-xs text-slate-500 leading-relaxed">Revisa los asientos contables y sus referencias asociadas.</p>
                 </div>
-                <span class="text-xs font-semibold text-sky-600 flex items-center whitespace-nowrap ml-4">
+                <span class="text-xs font-semibold text-sky-600 mt-6 flex items-center">
                     Auditar &rarr;
                 </span>
             </a>
-        </div>
 
-        <!-- Fila Siguiente: Bloque 6 - Gestión de Cobros y Pagos -->
-        <div class="mt-4">
-            <a href="{{ route('accounting.payments.index') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-purple-500 hover:shadow-lg transition text-left flex items-center justify-between">
-                <div class="flex items-center space-x-4">
-                    <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center group-hover:bg-purple-600 group-hover:text-white transition">
+            <!-- 6. Gestión de Cobros y Pagos -->
+            <a href="{{ route('accounting.payments.index') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-purple-500 hover:shadow-lg transition text-left flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-4 group-hover:bg-purple-600 group-hover:text-white transition">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     </div>
-                    <div>
-                        <h2 class="font-bold text-slate-800 group-hover:text-purple-600 transition text-base mb-0.5">6. Cobros y Pagos de Documentos</h2>
-                        <p class="text-xs text-slate-500">Gestiona saldos pendientes de compras y ventas aplicando pagos o cobros mediante cuentas de banco.</p>
-                    </div>
+                    <h2 class="font-bold text-slate-800 group-hover:text-purple-600 transition text-base mb-1">6. Cobros y Pagos</h2>
+                    <p class="text-xs text-slate-500 leading-relaxed">Gestiona saldos pendientes aplicando cobros y pagos.</p>
                 </div>
-                <span class="text-xs font-semibold text-purple-600 flex items-center whitespace-nowrap ml-4">
+                <span class="text-xs font-semibold text-purple-600 mt-6 flex items-center">
                     Gestionar &rarr;
                 </span>
             </a>
+
+            <!-- 7. Listado de Asientos Contables (Nuevo) -->
+            <a href="{{ route('accounting.system_journals') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-teal-500 hover:shadow-lg transition text-left flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center mb-4 group-hover:bg-teal-600 group-hover:text-white transition">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                    </div>
+                    <h2 class="font-bold text-slate-800 group-hover:text-teal-600 transition text-base mb-1">7. Asientos del Sistema</h2>
+                    <p class="text-xs text-slate-500 leading-relaxed">Visualiza y administra todos los asientos contables en formato de tabla.</p>
+                </div>
+                <span class="text-xs font-semibold text-teal-600 mt-6 flex items-center">
+                    Ver asientos &rarr;
+                </span>
+            </a>
+
         </div>
 
         <!-- Footer -->
