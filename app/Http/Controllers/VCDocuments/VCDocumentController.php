@@ -89,7 +89,9 @@ class VCDocumentController extends Controller
     {
         $request->validate([
             'document_ids' => 'required|array',
-            'custom_net_account' => 'nullable|string|max:20',
+            'custom_net_account' => 'required|string|max:20',
+        ], [
+            'custom_net_account.required' => 'Debe seleccionar o indicar una cuenta contable para el Neto.',
         ]);
 
         $documentIds = $request->input('document_ids');

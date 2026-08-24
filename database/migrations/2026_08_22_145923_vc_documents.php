@@ -9,6 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('vc_documents', function (Blueprint $table) {
+            $table->charset = 'utf8mb4';
+            $table->collation = 'utf8mb4_unicode_ci';
+
             $table->id();
             $table->unsignedSmallInteger('month_register');
             $table->unsignedSmallInteger('year_register');
@@ -24,7 +27,6 @@ return new class extends Migration
             $table->integer('folio');
             $table->date('date');
 
-            // Hechos nullable para que no exijan datos si no aplican
             $table->string('rut_ref', 10)->nullable();
             $table->integer('folio_ref')->nullable();
             $table->unsignedSmallInteger('td_ref')->nullable();
@@ -38,7 +40,6 @@ return new class extends Migration
             $table->bigInteger('minus_oth_tax')->default(0);
             $table->bigInteger('total')->default(0);
 
-            // Única línea para el owner
             $table->foreignId('owner_id')->constrained('owners')->onDelete('restrict');
             
             $table->index(['year_register', 'month_register', 'type_vc']);

@@ -14,7 +14,8 @@ class AccountSeeder extends Seeder
             ['code' => '110101', 'name' => 'Caja / Banco', 'category' => 'activo'],
             ['code' => '110102', 'name' => 'Clientes', 'category' => 'activo'],
             ['code' => '110201', 'name' => 'IVA Crédito Fiscal', 'category' => 'activo'],
-            
+            ['code' => '110301', 'name' => 'Otros Impuestos', 'category' => 'activo'],
+
             // Pasivos (2)
             ['code' => '210101', 'name' => 'Proveedores Nacionales', 'category' => 'pasivo'],
             ['code' => '210201', 'name' => 'IVA Débito Fiscal', 'category' => 'pasivo'],
@@ -28,6 +29,7 @@ class AccountSeeder extends Seeder
             // Costos y Gastos / Pérdida (5 o 6)
             ['code' => '510101', 'name' => 'Costo de Ventas', 'category' => 'perdida'],
             ['code' => '510201', 'name' => 'Gastos Generales', 'category' => 'perdida'],
+            ['code' => '510301', 'name' => 'IVA No Recuperable', 'category' => 'perdida'],
         ];
 
         foreach ($accounts as $acc) {

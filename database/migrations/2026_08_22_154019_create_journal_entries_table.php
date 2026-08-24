@@ -8,6 +8,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('journal_entries', function (Blueprint $table) {
+            $table->charset = 'utf8mb4';
+            $table->collation = 'utf8mb4_unicode_ci';
+
             $table->id();
             $table->unsignedBigInteger('journal_id');
             $table->string('account_code');

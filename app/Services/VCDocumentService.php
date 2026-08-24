@@ -119,9 +119,19 @@ class VCDocumentService
             throw new Exception('Archivo inválido.');
         }
 
-        $handle = fopen($uploadedFile->getRealPath(), 'r');
+        $content = file_get_contents($uploadedFile->getRealPath());
+        
+        $encoding = mb_detect_encoding($content, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true);
+        if ($encoding && $encoding !== 'UTF-8') {
+            $content = mb_convert_encoding($content, 'UTF-8', $encoding);
+        }
+        
+        $tempPath = tempnam(sys_get_temp_dir(), 'csv_utf8_');
+        file_put_contents($tempPath, $content);
+
+        $handle = fopen($tempPath, 'r');
         if ($handle === false) {
-            throw new Exception('No se pudo abrir el archivo CSV.');
+            throw new Exception('No se pudo abrir el archivo CSV procesado.');
         }
 
         DB::beginTransaction();
@@ -183,6 +193,10 @@ class VCDocumentService
         } finally {
             if (is_resource($handle)) {
                 fclose($handle);
+            }
+            // Limpiar el archivo temporal
+            if (isset($tempPath) && file_exists($tempPath)) {
+                @unlink($tempPath);
             }
         }
     }

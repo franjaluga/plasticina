@@ -47,22 +47,33 @@ class DocumentAccountingService
 
     protected function getAccountMapping(VCDocument $document, ?string $customNetAccount = null): array
     {
-        $tipo = strtoupper(trim($document->type_vc ?? 'C')); 
+        if (empty($customNetAccount)) {
+            throw new Exception("No se ha especificado la cuenta contable para el Neto.");
+        }
 
-        $netAccountCode = !empty($customNetAccount) ? $customNetAccount : ($tipo === 'V' || $tipo === 'VENTA' ? '410101' : '110101');
+        $tipo = strtoupper(trim($document->type_vc ?? 'C')); 
 
         if ($tipo === 'V' || $tipo === 'VENTA') {
             return [
-                'net'     => ['account_code' => $netAccountCode, 'type' => 'credit'],
-                'vat_rec' => ['account_code' => '210201', 'type' => 'credit'],
-                'total'   => ['account_code' => '110102', 'type' => 'debit'],
+                'net'           => ['account_code' => $customNetAccount, 'type' => 'credit'],
+                'exempt'        => ['account_code' => '410102', 'type' => 'credit'],
+                'vat_rec'       => ['account_code' => '110201', 'type' => 'credit'],
+                'vat_no_rec'    => ['account_code' => '510301', 'type' => 'credit'],
+                'plus_oth_tax'  => ['account_code' => '110301', 'type' => 'credit'],
+                'minus_oth_tax' => ['account_code' => '110301', 'type' => 'debit'],
+                'total'         => ['account_code' => '110102', 'type' => 'debit'],
             ];
         }
 
+        // Compras (C)
         return [
-            'net'     => ['account_code' => $netAccountCode, 'type' => 'debit'],
-            'vat_rec' => ['account_code' => '110201', 'type' => 'debit'],
-            'total'   => ['account_code' => '210101', 'type' => 'credit'],
+            'net'           => ['account_code' => $customNetAccount, 'type' => 'debit'],
+            'exempt'        => ['account_code' => '510102', 'type' => 'debit'],
+            'vat_rec'       => ['account_code' => '110201', 'type' => 'debit'],
+            'vat_no_rec'    => ['account_code' => '510301', 'type' => 'debit'],
+            'plus_oth_tax'  => ['account_code' => '110301', 'type' => 'debit'],
+            'minus_oth_tax' => ['account_code' => '110301', 'type' => 'credit'],
+            'total'         => ['account_code' => '210101', 'type' => 'credit'],
         ];
     }
 
