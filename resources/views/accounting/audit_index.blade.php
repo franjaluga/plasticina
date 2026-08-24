@@ -75,8 +75,9 @@
                                     <span class="text-slate-400">-</span>
                                 @endif
                             </td>
-                            <td class="p-3 text-right font-mono">$ {{ number_format($journal->total_debit, 2, ',', '.') }}</td>
-                            <td class="p-3 text-right font-mono">$ {{ number_format($journal->total_credit, 2, ',', '.') }}</td>
+                            {{-- Modificado a 0 decimales: number_format(..., 0, ',', '.') --}}
+                            <td class="p-3 text-right font-mono">$ {{ number_format($journal->total_debit, 0, ',', '.') }}</td>
+                            <td class="p-3 text-right font-mono">$ {{ number_format($journal->total_credit, 0, ',', '.') }}</td>
                             <td class="p-3 text-center whitespace-nowrap">
                                 <!-- Botón de Borrado -->
                                 <form action="{{ route('accounting.journals.destroy', $journal->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este registro? Si está vinculado a un documento, también se eliminará.');" class="inline">
