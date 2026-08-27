@@ -24,7 +24,7 @@ class JournalReportService
             return new Collection();
         }
 
-        $query = Journal::with(['document.entity', 'document.documentType', 'entries'])
+        $query = Journal::with(['document.entity', 'document.documentType', 'entries', 'paidDocument.entity', 'paidDocument.documentType'])
             ->where('owner_id', $activeOwner->id)
             ->where('year', $workingYear);
 

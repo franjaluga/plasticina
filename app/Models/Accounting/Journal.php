@@ -18,7 +18,8 @@ class Journal extends Model
         'date', 
         'total_debit', 
         'total_credit', 
-        'is_balanced'
+        'is_balanced',
+        'ref_doc_payed'
     ];
 
     public function entries()
@@ -34,5 +35,10 @@ class Journal extends Model
     public function owner()
     {
         return $this->belongsTo(Owner::class);
+    }
+
+    public function paidDocument()
+    {
+        return $this->belongsTo(VCDocument::class, 'ref_doc_payed');
     }
 }

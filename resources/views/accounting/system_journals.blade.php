@@ -72,7 +72,6 @@
                         <select name="document_type_id" class="form-select form-select-sm">
                             <option value="">-- Todos --</option>
                             @foreach($documentTypes as $dtype)
-                                {{-- Cambiamos $dtype->id por $dtype->doctype --}}
                                 <option value="{{ $dtype->doctype }}" {{ (isset($filters['document_type_id']) && $filters['document_type_id'] == $dtype->doctype) ? 'selected' : '' }}>
                                     {{ $dtype->name }}
                                 </option>
@@ -119,11 +118,50 @@
                         </a>
                     </td>
                     <td>{{ $journal->document->date_centralize ?? $journal->date }}</td>
-                    <td class="fw-bold">{{ $journal->document->folio ?? 'N/A (Manual)' }}</td>
-                    <td>{{ $journal->description ?? 'Asiento por documento V/C' }}</td>
-                    <td>{{ $journal->document->entity->rut ?? 'N/A' }}</td>
-                    <td>{{ $journal->document->documentType->name ?? 'Asiento Manual' }}</td>
-                    <td>{{ $journal->document->folio_ref ?? '-' }}</td>
+                    
+                    <!-- Folio -->
+                    <td class="fw-bold">
+                        @if($journal->ref_doc_payed)
+                            -
+                        @else
+                            {{ $journal->document->folio ?? 'N/A (Manual)' }}
+                        @endif
+                    </td>
+
+                    <!-- Glosa / Descripción Actualizada -->
+                    <td>
+                        {{ $journal->description ?? 'Asiento automatizado' }}
+                    </td>
+                    
+                    <!-- RUT -->
+                    <td>
+                        @if($journal->ref_doc_payed && $journal->paidDocument)
+                            {{ $journal->paidDocument->entity->rut ?? 'N/A' }}
+                        @else
+                            {{ $journal->document->entity->rut ?? 'N/A' }}
+                        @endif
+                    </td>
+
+                    <!-- Tipo Documento -->
+                    <td>
+                        @if($journal->ref_doc_payed && $journal->paidDocument)
+                            {{ $journal->paidDocument->documentType->name ?? 'Documento Pagado' }}
+                        @else
+                            {{ $journal->document->documentType->name ?? 'Asiento Manual' }}
+                        @endif
+                    </td>
+                    
+                    <!-- Folio Ref -->
+                    <td>
+                        @if($journal->ref_doc_payed && $journal->paidDocument)
+                            <span class="badge bg-secondary" title="Pago/Cobro aplicado al documento con Folio">
+                                Pago Doc. Folio: {{ $journal->paidDocument->folio }}
+                            </span>
+                        @else
+                            {{ $journal->document->folio_ref ?? '-' }}
+                        @endif
+                    </td>
+                    
                     <td class="text-center">
                         <form action="{{ route('accounting.audit.destroy', $journal->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este asiento y su documento asociado?');">
                             @csrf

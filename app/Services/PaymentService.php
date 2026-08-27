@@ -17,9 +17,6 @@ class PaymentService
         $this->ownerService = $ownerService;
     }
 
-    /**
-     * Obtiene documentos de compras y ventas que tienen saldo pendiente distinto de cero.
-     */
     public function getPendingBalanceDocuments(?int $year = null): Collection
     {
         $workingYear = $year ?? session('working_year', date('Y'));
@@ -51,23 +48,18 @@ class PaymentService
     {
         $tipo = strtoupper(trim($document->type_vc ?? 'C'));
         $accountCodeToCheck = ($tipo === 'V' || $tipo === 'VENTA') ? '110102' : '210101';
-        $componentTag = 'payment_doc_' . $document->id;
 
-        // Sumamos estrictamente los abonos que tengan la etiqueta asociada a ESTE documento ID
+        // Sumamos directamente los asientos de pago vinculados a este documento por la nueva columna
         $paid = DB::table('journal_entries')
             ->join('journals', 'journals.id', '=', 'journal_entries.journal_id')
             ->where('journals.owner_id', $ownerId)
-            ->whereNull('journals.vc_document_id')
+            ->where('journals.ref_doc_payed', $document->id)
             ->where('journal_entries.account_code', $accountCodeToCheck)
-            ->where('journal_entries.component_name', $componentTag)
             ->sum($tipo === 'V' || $tipo === 'VENTA' ? 'journal_entries.credit' : 'journal_entries.debit');
 
         return (float) $paid;
     }
 
-    /**
-     * Procesa el pago (Compra -> Proveedor) o cobro (Venta -> Cliente)
-     */
     public function processPayment(int $documentId, float $amount, string $date, string $bankAccountCode): Journal
     {
         $activeOwner = $this->ownerService->getActiveOwner();
@@ -79,7 +71,6 @@ class PaymentService
             $document = VCDocument::findOrFail($documentId);
             $tipo = strtoupper(trim($document->type_vc ?? 'C'));
 
-            // --- VALIDACIÓN DE SALDO MÁXIMO ---
             $totalDoc = (float) $document->total;
             $paidAmount = $this->calculatePaidAmount($document, $activeOwner->id);
             $balance = round($totalDoc - $paidAmount, 2);
@@ -87,58 +78,52 @@ class PaymentService
             if (round($amount, 2) > $balance) {
                 throw new Exception("El monto ingresado ({$amount}) excede el saldo pendiente del documento ({$balance}).");
             }
-            // ---------------------------------
 
             $year = date('Y', strtotime($date));
             $month = date('n', strtotime($date));
             
-            // Etiqueta única para rastrear este pago exclusivamente a este documento
-            $componentTag = 'payment_doc_' . $document->id;
-            
             if ($tipo === 'V' || $tipo === 'VENTA') {
-                // Cobro de Venta: Banco (Debe) / Clientes (Haber)
                 $entries = [
                     [
                         'account_code'   => $bankAccountCode,
-                        'component_name' => $componentTag,
+                        'component_name' => 'payment',
                         'debit'          => $amount,
                         'credit'         => 0,
                     ],
                     [
                         'account_code'   => '110102', // Clientes
-                        'component_name' => $componentTag,
+                        'component_name' => 'payment',
                         'debit'          => 0,
                         'credit'         => $amount,
                     ]
                 ];
             } else {
-                // Pago de Compra: Proveedores (Debe) / Banco (Haber)
                 $entries = [
                     [
                         'account_code'   => '210101', // Proveedores
-                        'component_name' => $componentTag,
+                        'component_name' => 'payment',
                         'debit'          => $amount,
                         'credit'         => 0,
                     ],
                     [
                         'account_code'   => $bankAccountCode,
-                        'component_name' => $componentTag,
+                        'component_name' => 'payment',
                         'debit'          => 0,
                         'credit'         => $amount,
                     ]
                 ];
             }
 
-            // Calcular número de asiento correlativo
             $lastEntryNumber = Journal::where('owner_id', $activeOwner->id)
                 ->where('year', $year)
                 ->lockForUpdate()
                 ->max('entry_number');
             $nextEntryNumber = ($lastEntryNumber ?? 0) + 1;
 
-            // Crear el asiento manual (vc_document_id = null)
+            // Creamos el asiento guardando explícitamente el documento pagado en 'ref_doc_payed'
             $journal = Journal::create([
                 'vc_document_id' => null, 
+                'ref_doc_payed'  => $document->id, // <-- Aquí queda la trazabilidad oficial
                 'owner_id'       => $activeOwner->id,
                 'year'           => (int) $year,
                 'month'          => (int) $month,
