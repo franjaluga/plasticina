@@ -17,10 +17,6 @@ compruebe la versión
 1.2 - Crear la base de datos en su gestor de base de datos
 
 ```
-DROP DATABASE IF EXISTS plasticina;
-```
-
-```
 CREATE DATABASE plasticina 
 CHARACTER SET utf8mb4 
 COLLATE utf8mb4_unicode_ci;
