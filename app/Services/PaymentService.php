@@ -49,22 +49,17 @@ class PaymentService
 
     protected function calculatePaidAmount(VCDocument $document, int $ownerId): float
     {
-        // Como no usamos texto, podemos sumar los abonos/pagos realizados en asientos manuales 
-        // filtrando por la cuenta de Proveedores (210101) o Clientes (110102) que coincidan con la fecha posterior al documento 
-        // o mediante un registro estricto. Para simplificar y hacerlo exacto, sumamos los pagos registrados 
-        // cuya fecha sea >= a la fecha del documento y afecten la cuenta del documento.
-        
         $tipo = strtoupper(trim($document->type_vc ?? 'C'));
         $accountCodeToCheck = ($tipo === 'V' || $tipo === 'VENTA') ? '110102' : '210101';
+        $componentTag = 'payment_doc_' . $document->id;
 
-        // Buscamos líneas de asientos manuales que hayan movido la cuenta de cliente/proveedor 
-        // en una fecha igual o posterior al documento dentro del mismo owner.
+        // Sumamos estrictamente los abonos que tengan la etiqueta asociada a ESTE documento ID
         $paid = DB::table('journal_entries')
             ->join('journals', 'journals.id', '=', 'journal_entries.journal_id')
             ->where('journals.owner_id', $ownerId)
             ->whereNull('journals.vc_document_id')
             ->where('journal_entries.account_code', $accountCodeToCheck)
-            ->where('journals.date', '>=', $document->date)
+            ->where('journal_entries.component_name', $componentTag)
             ->sum($tipo === 'V' || $tipo === 'VENTA' ? 'journal_entries.credit' : 'journal_entries.debit');
 
         return (float) $paid;
@@ -97,18 +92,21 @@ class PaymentService
             $year = date('Y', strtotime($date));
             $month = date('n', strtotime($date));
             
+            // Etiqueta única para rastrear este pago exclusivamente a este documento
+            $componentTag = 'payment_doc_' . $document->id;
+            
             if ($tipo === 'V' || $tipo === 'VENTA') {
                 // Cobro de Venta: Banco (Debe) / Clientes (Haber)
                 $entries = [
                     [
                         'account_code'   => $bankAccountCode,
-                        'component_name' => 'payment',
+                        'component_name' => $componentTag,
                         'debit'          => $amount,
                         'credit'         => 0,
                     ],
                     [
                         'account_code'   => '110102', // Clientes
-                        'component_name' => 'payment',
+                        'component_name' => $componentTag,
                         'debit'          => 0,
                         'credit'         => $amount,
                     ]
@@ -118,13 +116,13 @@ class PaymentService
                 $entries = [
                     [
                         'account_code'   => '210101', // Proveedores
-                        'component_name' => 'payment',
+                        'component_name' => $componentTag,
                         'debit'          => $amount,
                         'credit'         => 0,
                     ],
                     [
                         'account_code'   => $bankAccountCode,
-                        'component_name' => 'payment',
+                        'component_name' => $componentTag,
                         'debit'          => 0,
                         'credit'         => $amount,
                     ]
@@ -138,7 +136,7 @@ class PaymentService
                 ->max('entry_number');
             $nextEntryNumber = ($lastEntryNumber ?? 0) + 1;
 
-            // Crear el asiento manual (vc_document_id = null) SIN campos de texto
+            // Crear el asiento manual (vc_document_id = null)
             $journal = Journal::create([
                 'vc_document_id' => null, 
                 'owner_id'       => $activeOwner->id,
