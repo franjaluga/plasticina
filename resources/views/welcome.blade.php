@@ -87,19 +87,25 @@
         <!-- 3 Botones Principales -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             
-            <!-- 1. Ingreso Manual (Agrupa Registros V/C y Asiento Manual) -->
-            <a href="{{ route('ingress.manual') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-indigo-500 hover:shadow-lg transition text-left flex flex-col justify-between">
+            <!-- 1. Ingreso Manual (Agrupa Registros V/C y Asiento Manual con acceso directo al formulario manual) -->
+            <div class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-indigo-500 hover:shadow-lg transition text-left flex flex-col justify-between">
                 <div>
                     <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                     </div>
                     <h2 class="font-bold text-slate-800 group-hover:text-indigo-600 transition text-base mb-1">1. Ingreso Manual</h2>
-                    <p class="text-xs text-slate-500 leading-relaxed">Registro individual de documentos V/C y creación de asientos contables.</p>
+                    <p class="text-xs text-slate-500 leading-relaxed mb-4">Registro individual de documentos V/C y creación de asientos contables.</p>
                 </div>
-                <span class="text-xs font-semibold text-indigo-600 mt-6 flex items-center">
-                    Acceder &rarr;
-                </span>
-            </a>
+                
+                <div class="space-y-2">
+                    <a href="{{ route('ingress.manual') }}" class="w-full text-xs font-semibold bg-indigo-50 text-indigo-700 p-2.5 rounded-lg hover:bg-indigo-600 hover:text-white transition flex items-center justify-between">
+                        <span>Menú Ingreso Manual</span> &rarr;
+                    </a>
+                    <a href="{{ route('accounting.manual_journals.create') }}" class="w-full text-xs font-semibold bg-slate-900 text-white p-2.5 rounded-lg hover:bg-slate-800 transition flex items-center justify-between">
+                        <span>+ Nuevo Asiento Directo</span> &rarr;
+                    </a>
+                </div>
+            </div>
 
             <!-- 2. Importadores (Apunta a ingress.import) -->
             <a href="{{ route('ingress.import') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-green-500 hover:shadow-lg transition text-left flex flex-col justify-between">
