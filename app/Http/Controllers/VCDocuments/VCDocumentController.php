@@ -103,32 +103,77 @@ class VCDocumentController extends Controller
         return back()->with('success', "Se procesaron correctamente {$result['success_count']} documentos.");
     }
 
-    public function journalBook(Request $request, VCDocumentService $vcDocumentService, \App\Services\OwnerService $ownerService)
+    public function journalBook(\Illuminate\Http\Request $request)
     {
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
+        $activeOwner = app(\App\Services\OwnerService::class)->getActiveOwner();
+        $workingYear = session('working_year', date('Y'));
 
-        $activeOwner = $ownerService->getActiveOwner();
-        $workingYear = (int) session('working_year', date('Y'));
+        // Obtener filtros de fecha si se enviaron desde el formulario de rango
+        $dateFrom = $request->input('date_from');
+        $dateTo = $request->input('date_to');
 
-        if (!$startDate || !$endDate) {
-            return redirect()->route('vc_documents.journal_book.form')
-                ->withErrors(['error' => 'Debe seleccionar un rango de fechas válido.']);
+        // Consulta unificada: Obtenemos todos los asientos (journals) del owner activo y año de trabajo
+        $query = \App\Models\Accounting\Journal::with(['document.documentType', 'document.entity', 'entries.account', 'paidDocument'])
+            ->where('year', $workingYear);
+
+        if ($activeOwner) {
+            $query->where('owner_id', $activeOwner->id);
         }
 
-        $documents = $vcDocumentService->getJournalBookByDateRange(
-            $activeOwner->id, 
-            $workingYear, 
-            $startDate, 
-            $endDate
-        );
+        // Aplicar filtro por rango de fechas si existe
+        if ($dateFrom && $dateTo) {
+            $query->whereBetween('date', [$dateFrom, $dateTo]);
+        }
 
-        // Extraemos los asientos (journals) que tengan los documentos para que la vista los lea con la variable $journals
-        $journals = $documents->map(function($doc) {
-            return $doc->journal;
-        })->filter(); // Filtramos por si hay documentos sin asiento
+        $journals = $query->orderBy('date', 'asc')
+                          ->orderBy('entry_number', 'asc')
+                          ->get();
 
-        return view('vc_documents.journal_book', compact('journals', 'startDate', 'endDate'));
+        // Si se solicitó exportar a CSV
+        if ($request->routeIs('*.export_csv') || $request->has('export') && $request->input('export') === 'csv') {
+            $filename = 'libro_diario_' . $workingYear . '.csv';
+            
+            $headers = [
+                "Content-type"        => "text/csv",
+                "Content-Disposition" => "attachment; filename=$filename",
+                "Pragma"              => "no-cache",
+                "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+                "Expires"             => "0"
+            ];
+
+            $callback = function() use ($journals) {
+                $file = fopen('php://output', 'w');
+                // Forzar codificación UTF-8 para Excel
+                fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+                
+                // Cabeceras del CSV
+                fputcsv($file, ['N° Asiento', 'Fecha', 'Glosa / Descripción', 'Código Cuenta', 'Nombre Cuenta', 'Debe', 'Haber'], ';');
+
+                foreach ($journals as $journal) {
+                    $entryNumber = $journal->entry_number;
+                    $date = $journal->date;
+                    $glosa = $journal->description ?? 'Sin descripción';
+
+                    foreach ($journal->entries as $entry) {
+                        fputcsv($file, [
+                            $entryNumber,
+                            $date,
+                            $glosa,
+                            $entry->account_code,
+                            $entry->account->name ?? 'Cuenta no encontrada',
+                            $entry->debit,
+                            $entry->credit
+                        ], ';');
+                    }
+                }
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers);
+        }
+
+        // Retornar la vista del Libro Diario con los asientos unificados (V/C + Manuales)
+        return view('vc_documents.journal_book', compact('journals', 'workingYear', 'dateFrom', 'dateTo'));
     }
 
     public function exportCsv(BooksToCsv $csvService): StreamedResponse

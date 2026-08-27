@@ -24,13 +24,13 @@
 
         <form action="{{ route('vc_documents.journal_book.generate') }}" method="GET" class="space-y-4">
             <div>
-                <label for="start_date" class="block text-xs font-semibold text-slate-600 mb-1">Fecha de Inicio</label>
-                <input type="date" name="start_date" id="start_date" value="{{ date('Y-m-01') }}" required class="w-full text-xs rounded-lg border-slate-300 shadow-sm p-2.5 bg-white border focus:border-emerald-500 focus:ring-emerald-500">
+                <label for="date_from" class="block text-xs font-semibold text-slate-600 mb-1">Fecha de Inicio</label>
+                <input type="date" name="date_from" id="date_from" value="{{ date('Y-m-01') }}" required class="w-full text-xs rounded-lg border-slate-300 shadow-sm p-2.5 bg-white border focus:border-emerald-500 focus:ring-emerald-500">
             </div>
 
             <div>
-                <label for="end_date" class="block text-xs font-semibold text-slate-600 mb-1">Fecha de Término</label>
-                <input type="date" name="end_date" id="end_date" value="{{ date('Y-m-t') }}" required class="w-full text-xs rounded-lg border-slate-300 shadow-sm p-2.5 bg-white border focus:border-emerald-500 focus:ring-emerald-500">
+                <label for="date_to" class="block text-xs font-semibold text-slate-600 mb-1">Fecha de Término</label>
+                <input type="date" name="date_to" id="date_to" value="{{ date('Y-m-t') }}" required class="w-full text-xs rounded-lg border-slate-300 shadow-sm p-2.5 bg-white border focus:border-emerald-500 focus:ring-emerald-500">
             </div>
 
             <div class="pt-4">
