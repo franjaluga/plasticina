@@ -24,7 +24,7 @@ class ManualJournalController extends Controller
         $accounts = Account::orderBy('code', 'asc')->get();
         $workingYear = session('working_year', date('Y'));
         
-        $templates = config('journal_templates.templates');
+        $templates = config('journal_templates.templates', []);
 
         return view('accounting.manual_journals_create', compact('accounts', 'workingYear', 'activeOwner', 'templates'));
     }

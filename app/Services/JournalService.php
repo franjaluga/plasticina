@@ -9,14 +9,14 @@ use Exception;
 
 class JournalService
 {
-    public function registerDocumentJournal(VCDocument $document, array $accountMapping): Journal
+    public function registerDocumentJournal(VCDocument $document, array $accountMapping, ?string $glosa = null): Journal
     {
         // 1. Validación preventiva: Verificar si ya tiene un asiento contable
         if ($document->journal()->exists()) {
             throw new Exception("El documento con ID {$document->id} ya ha sido contabilizado previamente.");
         }
 
-        return DB::transaction(function () use ($document, $accountMapping) {
+        return DB::transaction(function () use ($document, $accountMapping, $glosa) {
             
             $ownerId = $document->owner_id;
             $year = $document->year_register;
@@ -77,13 +77,14 @@ class JournalService
                 throw new Exception("El asiento contable no está cuadrado. Total Debe: {$totalDebit}, Total Haber: {$totalCredit}");
             }
 
-            // 5. Crear cabecera incluyendo el Owner, el Año y el Correlativo único
+            // 5. Crear cabecera incluyendo el Owner, el Año, el Correlativo y la Glosa (description)
             $journal = Journal::create([
                 'vc_document_id' => $document->id,
                 'owner_id'       => $ownerId,
                 'year'           => $year,
                 'entry_number'   => $nextEntryNumber,
                 'date'           => $document->date,
+                'description'    => $glosa ?: ('Contabilización documento folio ' . $document->folio),
                 'total_debit'    => $totalDebit,
                 'total_credit'   => $totalCredit,
                 'is_balanced'    => $isBalanced,

@@ -17,7 +17,7 @@ class DocumentAccountingService
         $this->journalService = $journalService;
     }
 
-    public function batchProcess(array $documentIds, ?string $customNetAccount = null): array
+    public function batchProcess(array $documentIds, ?string $customNetAccount = null, ?string $glosa = null): array
     {
         $successCount = 0;
         $errorMessages = [];
@@ -32,7 +32,9 @@ class DocumentAccountingService
 
             try {
                 $accountMapping = $this->getAccountMapping($document, $customNetAccount);
-                $this->journalService->registerDocumentJournal($document, $accountMapping);
+                
+                $this->journalService->registerDocumentJournal($document, $accountMapping, $glosa);
+                
                 $successCount++;
             } catch (Exception $e) {
                 $errorMessages[] = "Doc ID {$id}: " . $e->getMessage();
@@ -56,24 +58,24 @@ class DocumentAccountingService
         if ($tipo === 'V' || $tipo === 'VENTA') {
             return [
                 'net'           => ['account_code' => $customNetAccount, 'type' => 'credit'],
-                'exempt'        => ['account_code' => '410102', 'type' => 'credit'],
-                'vat_rec'       => ['account_code' => '110201', 'type' => 'credit'],
-                'vat_no_rec'    => ['account_code' => '510301', 'type' => 'credit'],
-                'plus_oth_tax'  => ['account_code' => '110301', 'type' => 'credit'],
-                'minus_oth_tax' => ['account_code' => '110301', 'type' => 'debit'],
-                'total'         => ['account_code' => '110102', 'type' => 'debit'],
+                'exempt'        => ['account_code' => '4010110', 'type' => 'credit'],
+                'vat_rec'       => ['account_code' => '1010802', 'type' => 'credit'],
+                'vat_no_rec'    => ['account_code' => '4011021', 'type' => 'credit'],
+                'plus_oth_tax'  => ['account_code' => '1010804', 'type' => 'credit'],
+                'minus_oth_tax' => ['account_code' => '1010804', 'type' => 'debit'],
+                'total'         => ['account_code' => '1010401', 'type' => 'debit'],
             ];
         }
 
         // Compras (C)
         return [
             'net'           => ['account_code' => $customNetAccount, 'type' => 'debit'],
-            'exempt'        => ['account_code' => '510102', 'type' => 'debit'],
-            'vat_rec'       => ['account_code' => '110201', 'type' => 'debit'],
-            'vat_no_rec'    => ['account_code' => '510301', 'type' => 'debit'],
-            'plus_oth_tax'  => ['account_code' => '110301', 'type' => 'debit'],
-            'minus_oth_tax' => ['account_code' => '110301', 'type' => 'credit'],
-            'total'         => ['account_code' => '210101', 'type' => 'credit'],
+            'exempt'        => ['account_code' => '40109', 'type' => 'debit'],
+            'vat_rec'       => ['account_code' => '1010802', 'type' => 'debit'],
+            'vat_no_rec'    => ['account_code' => '4011021', 'type' => 'debit'],
+            'plus_oth_tax'  => ['account_code' => '1010804', 'type' => 'debit'],
+            'minus_oth_tax' => ['account_code' => '1010804', 'type' => 'credit'],
+            'total'         => ['account_code' => '2010201', 'type' => 'credit'],
         ];
     }
 

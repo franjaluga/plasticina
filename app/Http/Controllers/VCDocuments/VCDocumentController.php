@@ -91,14 +91,18 @@ class VCDocumentController extends Controller
         $request->validate([
             'document_ids' => 'required|array',
             'custom_net_account' => 'required|string|max:20',
+            'glosa' => 'required|string|max:255', // Validamos que se incluya la glosa
         ], [
             'custom_net_account.required' => 'Debe seleccionar o indicar una cuenta contable para el Neto.',
+            'glosa.required' => 'Debe ingresar una glosa o descripción general para los asientos.',
         ]);
 
         $documentIds = $request->input('document_ids');
         $customNetAccount = $request->input('custom_net_account');
+        $glosa = $request->input('glosa'); // Capturamos la glosa ingresada
 
-        $result = $accountingService->batchProcess($documentIds, $customNetAccount);
+        // Pasamos la glosa al servicio de proceso por lotes
+        $result = $accountingService->batchProcess($documentIds, $customNetAccount, $glosa);
 
         return back()->with('success', "Se procesaron correctamente {$result['success_count']} documentos.");
     }

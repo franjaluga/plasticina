@@ -63,7 +63,7 @@
                 <button type="button" 
                         onclick="loadTemplate('{{ $key }}')" 
                         class="text-xs bg-white border border-indigo-300 text-indigo-700 px-3 py-1.5 rounded font-semibold hover:bg-indigo-600 hover:text-white transition shadow-sm">
-                    + {{ $template['name'] }}
+                   + {{ $template['name'] ?? $template['title'] ?? ucfirst(str_replace('_', ' ', $key)) }}
                 </button>
             @endforeach
         </div>
