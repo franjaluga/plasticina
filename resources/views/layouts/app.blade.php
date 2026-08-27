@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>@yield('title', 'Mi aplicación')</title>
     <!-- Puedes enlazar CSS de Bootstrap o tu propio estilo -->
-    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
 
