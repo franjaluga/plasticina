@@ -87,4 +87,62 @@ class ManualJournalService
             return $journal;
         });
     }
+
+    public function updateManualJournal(Journal $journal, int $year, int $month, string $date, string $description, array $entries): Journal
+    {
+        if ($journal->vc_document_id) {
+            throw new Exception("Este asiento está asociado a un documento V/C y no puede actualizarse como manual.");
+        }
+
+        return DB::transaction(function () use ($journal, $year, $month, $date, $description, $entries) {
+            
+            $totalDebit = 0;
+            $totalCredit = 0;
+            $formattedEntries = [];
+
+            // 1. Procesar y validar las líneas de detalle enviadas
+            foreach ($entries as $entry) {
+                $debit = (float) ($entry['debit'] ?? 0);
+                $credit = (float) ($entry['credit'] ?? 0);
+
+                if ($debit > 0 || $credit > 0) {
+                    $totalDebit += $debit;
+                    $totalCredit += $credit;
+
+                    $formattedEntries[] = [
+                        'account_code'   => $entry['account_code'],
+                        'component_name' => 'manual',
+                        'debit'          => $debit,
+                        'credit'         => $credit,
+                    ];
+                }
+            }
+
+            // 2. Validación estricta de partida doble
+            $isBalanced = round($totalDebit, 2) === round($totalCredit, 2);
+
+            if (!$isBalanced) {
+                throw new Exception("El asiento contable no está cuadrado. Total Debe: {$totalDebit}, Total Haber: {$totalCredit}");
+            }
+
+            // 3. Actualizar la cabecera del asiento
+            $journal->update([
+                'year'         => $year,
+                'month'        => $month,
+                'date'         => $date,
+                'description'  => $description,
+                'total_debit'  => $totalDebit,
+                'total_credit' => $totalCredit,
+                'is_balanced'  => $isBalanced,
+            ]);
+
+            // 4. Reemplazar las líneas de detalle de forma limpia
+            $journal->entries()->delete();
+            foreach ($formattedEntries as $entry) {
+                $journal->entries()->create($entry);
+            }
+
+            return $journal;
+        });
+    }
 }

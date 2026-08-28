@@ -176,9 +176,13 @@
                             <!-- Acciones (Editar y Eliminar) -->
                             <td class="py-3 px-4 text-center">
                                 <div class="flex items-center justify-center space-x-1.5">
-                                    <!-- Botón Editar (Solo disponible si el asiento está vinculado a un documento V/C) -->
+                                    <!-- Botón Editar V/C o Manual -->
                                     @if($journal->vc_document_id)
                                         <a href="{{ route('accounting.journals.edit', $journal->id) }}" class="bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold px-2 py-1 rounded transition text-xs" title="Editar Asiento V/C">
+                                            Editar
+                                        </a>
+                                    @else
+                                        <a href="{{ route('accounting.manual_journals.edit', $journal->id) }}" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold px-2 py-1 rounded transition text-xs" title="Editar Asiento Manual">
                                             Editar
                                         </a>
                                     @endif

@@ -163,3 +163,9 @@ Route::get('/accounting/journals/{id}/edit', [AccountingReportController::class,
     ->name('accounting.journals.edit');
 Route::put('/accounting/journals/{id}', [AccountingReportController::class, 'updateJournal'])
     ->name('accounting.journals.update');
+
+// Edición de Asientos Manuales
+Route::get('/accounting/manual-journals/{id}/edit', [ManualJournalController::class, 'edit'])
+    ->name('accounting.manual_journals.edit');
+Route::put('/accounting/manual-journals/{id}', [ManualJournalController::class, 'update'])
+    ->name('accounting.manual_journals.update');
