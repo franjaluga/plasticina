@@ -23,8 +23,8 @@ class PaymentController extends Controller
         $activeOwner = $ownerService->getActiveOwner();
         $pendingDocuments = $this->paymentService->getPendingBalanceDocuments();
         
-        // Obtenemos cuentas bancarias o de activos para los pagos (ej: cuentas que comiencen por caja/banco o todas las cuentas)
-        $accounts = Account::orderBy('code', 'asc')->get();
+        // Corregido: uso del método centralizado con unique('code') automático
+        $accounts = Account::getActiveOwnerAccounts();
 
         return view('accounting.payments_index', compact('activeOwner', 'pendingDocuments', 'accounts'));
     }

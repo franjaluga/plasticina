@@ -22,7 +22,12 @@ class ManualJournalController extends Controller
     public function create(OwnerService $ownerService)
     {
         $activeOwner = $ownerService->getActiveOwner();
-        $accounts = Account::orderBy('code', 'asc')->get();
+        
+        // Obtener solo las cuentas del owner activo actual (si existe)
+        $accounts = $activeOwner 
+            ? Account::where('owner_id', $activeOwner->id)->orderBy('code', 'asc')->get() 
+            : collect();
+
         $workingYear = session('working_year', date('Y'));
         
         $templates = config('journal_templates.templates', []);
@@ -69,10 +74,15 @@ class ManualJournalController extends Controller
                 ->with('error', 'Este asiento corresponde a un documento V/C.');
         }
 
-        $accounts = Account::orderBy('code', 'asc')->get();
-        $workingYear = session('working_year', date('Y'));
-        
         $activeOwner = $ownerService->getActiveOwner();
+
+        $targetOwnerId = $journal->owner_id ?? $activeOwner?->id;
+
+        $accounts = $targetOwnerId 
+            ? Account::where('owner_id', $targetOwnerId)->orderBy('code', 'asc')->get() 
+            : Account::orderBy('code', 'asc')->get();
+
+        $workingYear = session('working_year', date('Y'));
         
         $templates = config('journal_templates.templates', []);
 

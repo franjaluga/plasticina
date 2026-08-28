@@ -14,6 +14,7 @@ use App\Http\Controllers\Accounting\ManualJournalController;
 use App\Http\Controllers\Accounting\AuditController;
 use App\Http\Controllers\Accounting\PaymentController;
 use App\Http\Controllers\Accounting\AccountTemplateController;
+use App\Http\Controllers\Owners\AccountController;
 
 Route::get('/', function (OwnerService $ownerService) {
     $activeOwner = $ownerService->getActiveOwner();
@@ -178,12 +179,18 @@ Route::put('/accounting/manual-journals/{id}', [ManualJournalController::class, 
     ->name('accounting.manual_journals.update');
 
 
+Route::prefix('owners/{owner}/accounts')->name('owners.accounts.')->group(function () {
+    Route::get('/', [AccountController::class, 'index'])->name('index');
+    Route::post('/', [AccountController::class, 'store'])->name('store');
+    Route::put('/{account}', [AccountController::class, 'update'])->name('update');
+    Route::delete('/{account}', [AccountController::class, 'destroy'])->name('destroy');
+});
 
 
-Route::prefix('masters/account-templates')->name('masters.account_templates.')->group(function () {
-    Route::get('/', [AccountTemplateController::class, 'index'])->name('index');
-    Route::post('/', [AccountTemplateController::class, 'store'])->name('store');
-    Route::get('/{accountTemplate}/edit', [AccountTemplateController::class, 'edit'])->name('edit');
-    Route::put('/{accountTemplate}', [AccountTemplateController::class, 'update'])->name('update');
-    Route::delete('/{accountTemplate}', [AccountTemplateController::class, 'destroy'])->name('destroy');
+Route::prefix('accounting/audit')->name('accounting.audit.')->group(function () {
+    Route::get('/', [AuditController::class, 'index'])->name('index');
+    // Asigna el nombre 'destroy' al método que prefieras (por ejemplo, destroyJournalOnly)
+    Route::delete('/{journal}/only', [AuditController::class, 'destroyJournalOnly'])->name('destroy');
+    // O si prefieres la otra opción:
+    // Route::delete('/{journal}/document', [AuditController::class, 'destroyWithDocument'])->name('destroy');
 });

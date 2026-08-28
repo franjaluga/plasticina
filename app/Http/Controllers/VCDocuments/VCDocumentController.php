@@ -81,7 +81,7 @@ class VCDocumentController extends Controller
     {
         $documents = $accountingService->getPendingDocuments();
         
-        $accounts = Account::orderBy('code')->get();
+        $accounts = Account::getActiveOwnerAccounts();
 
         return view('vc_documents.pending', compact('documents', 'accounts'));
     }

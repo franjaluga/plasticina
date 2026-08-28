@@ -140,9 +140,13 @@
         <!-- Footer -->
         <div class="mt-8 pt-4 border-t border-slate-200 text-xs text-slate-400 flex justify-between items-center">
             <p>Sistema Contable v1.0</p>
-            <a href="{{ route('masters.account_templates.index') }}" class="font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-1.5 rounded-lg transition shadow-sm">
-                ⚙️ Configurar Sistema
-            </a>
+            @if($activeOwner)
+                <a href="{{ route('owners.accounts.index', $activeOwner->id) }}" class="text-indigo-600 hover:text-indigo-900 text-xs font-semibold">
+                    Ver/Editar Plan de Cuentas
+                </a>
+            @else
+                <span class="text-slate-400 text-xs italic">Seleccione un owner para ver su plan de cuentas</span>
+            @endif
         </div>
     </div>
 

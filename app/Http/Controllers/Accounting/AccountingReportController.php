@@ -12,12 +12,16 @@ use App\Services\JournalDetailService;
 use App\Models\Masters\DocumentType;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use App\Services\OwnerService;
 
 class AccountingReportController extends Controller
 {
-    public function index()
+    public function index(OwnerService $ownerService)
     {
-        $accounts = Account::orderBy('code', 'asc')->get();
+        $activeOwner = $ownerService->getActiveOwner();
+        $accounts = $activeOwner 
+            ? Account::where('owner_id', $activeOwner->id)->orderBy('code', 'asc')->get() 
+            : collect();
 
         return view('accounting.index', compact('accounts'));
     }
@@ -57,9 +61,12 @@ class AccountingReportController extends Controller
         return view('accounting.journal_detail', compact('journal'));
     }
 
-    public function analyticsIndex()
+    public function analyticsIndex(OwnerService $ownerService)
     {
-        $accounts = Account::orderBy('code', 'asc')->get();
+        $activeOwner = $ownerService->getActiveOwner();
+        $accounts = $activeOwner 
+            ? Account::where('owner_id', $activeOwner->id)->orderBy('code', 'asc')->get() 
+            : collect();
 
         return view('accounting.analytics', compact('accounts'));
     }
@@ -73,7 +80,9 @@ class AccountingReportController extends Controller
                 ->with('error', 'Este asiento no está asociado a un documento V/C de compra/venta.');
         }
 
-        $accounts = Account::orderBy('code', 'asc')->get();
+        $accounts = Account::where('owner_id', $journal->owner_id)
+            ->orderBy('code', 'asc')
+            ->get();
 
         return view('accounting.edit_journal', compact('journal', 'accounts'));
     }
