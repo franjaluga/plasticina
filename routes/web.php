@@ -130,8 +130,14 @@ Route::get('/accounting/ledger', [LedgerController::class, 'index'])
 
 // Auditoría V/C y Borrado
 Route::get('/accounting/reports/audit', [AuditController::class, 'index'])->name('accounting.reports.audit');
-Route::delete('/accounting/journals/{journal}', [AuditController::class, 'destroy'])->name('accounting.journals.destroy');
-Route::delete('/accounting/audit/{journal}', [AuditController::class, 'destroy'])->name('accounting.audit.destroy');
+
+// Eliminar SOLO el asiento contable (el documento vuelve a pendientes de contabilizar)
+Route::delete('/accounting/journals/{journal}/soft-delete', [AuditController::class, 'destroyJournalOnly'])->name('accounting.journals.destroy_journal_only');
+Route::delete('/accounting/audit/{journal}/soft-delete', [AuditController::class, 'destroyJournalOnly'])->name('accounting.audit.destroy_journal_only');
+
+// Eliminar el documento Y el asiento definitivamente (NO vuelve a pendientes)
+Route::delete('/accounting/journals/{journal}/with-document', [AuditController::class, 'destroyWithDocument'])->name('accounting.journals.destroy_with_document');
+Route::delete('/accounting/audit/{journal}/with-document', [AuditController::class, 'destroyWithDocument'])->name('accounting.audit.destroy_with_document');
 
 // Cobros y Pagos
 Route::get('/accounting/payments', [PaymentController::class, 'index'])->name('accounting.payments.index');

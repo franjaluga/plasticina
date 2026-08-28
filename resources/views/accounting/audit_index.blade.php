@@ -75,18 +75,39 @@
                                     <span class="text-slate-400">-</span>
                                 @endif
                             </td>
-                            {{-- Modificado a 0 decimales: number_format(..., 0, ',', '.') --}}
                             <td class="p-3 text-right font-mono">$ {{ number_format($journal->total_debit, 0, ',', '.') }}</td>
                             <td class="p-3 text-right font-mono">$ {{ number_format($journal->total_credit, 0, ',', '.') }}</td>
                             <td class="p-3 text-center whitespace-nowrap">
-                                <!-- Botón de Borrado -->
-                                <form action="{{ route('accounting.journals.destroy', $journal->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este registro? Si está vinculado a un documento, también se eliminará.');" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="px-2.5 py-1 bg-rose-50 text-rose-600 border border-rose-200 rounded-lg text-xs font-semibold hover:bg-rose-600 hover:text-white transition shadow-sm">
-                                        Eliminar
-                                    </button>
-                                </form>
+                                <div class="flex items-center justify-center space-x-1.5">
+                                    @if($journal->document)
+                                        <!-- Opción 1: Quitar documento (elimina asiento y devuelve documento a pendientes) -->
+                                        <form action="{{ route('accounting.journals.destroy_journal_only', $journal->id) }}" method="POST" onsubmit="return confirm('¿Desea quitar el documento del asiento? El documento asociado volverá a estar pendiente de contabilizar.');" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="px-2 py-1 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg text-xs font-semibold hover:bg-amber-600 hover:text-white transition shadow-sm" title="Quitar documento (El documento vuelve a pendientes)">
+                                                Quitar documento
+                                            </button>
+                                        </form>
+
+                                        <!-- Opción 2: Borrar documento y asiento definitivamente -->
+                                        <form action="{{ route('accounting.journals.destroy_with_document', $journal->id) }}" method="POST" onsubmit="return confirm('¡ADVERTENCIA! Está a punto de borrar el documento y su asiento definitivamente. Esta acción no se puede deshacer y el documento NO volverá a pendientes. ¿Continuar?');" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="px-2 py-1 bg-rose-50 text-rose-600 border border-rose-200 rounded-lg text-xs font-semibold hover:bg-rose-600 hover:text-white transition shadow-sm" title="Borrar documento y asiento definitivamente">
+                                                Borrar documento y asiento
+                                            </button>
+                                        </form>
+                                    @else
+                                        <!-- Para asientos manuales que no tienen documento V/C -->
+                                        <form action="{{ route('accounting.journals.destroy_journal_only', $journal->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este asiento manual?');" class="inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="px-2.5 py-1 bg-rose-50 text-rose-600 border border-rose-200 rounded-lg text-xs font-semibold hover:bg-rose-600 hover:text-white transition shadow-sm">
+                                                Eliminar
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @empty
