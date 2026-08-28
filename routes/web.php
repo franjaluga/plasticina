@@ -13,6 +13,7 @@ use App\Http\Controllers\Accounting\LedgerController;
 use App\Http\Controllers\Accounting\ManualJournalController;
 use App\Http\Controllers\Accounting\AuditController;
 use App\Http\Controllers\Accounting\PaymentController;
+use App\Http\Controllers\Accounting\AccountTemplateController;
 
 Route::get('/', function (OwnerService $ownerService) {
     $activeOwner = $ownerService->getActiveOwner();
@@ -175,3 +176,14 @@ Route::get('/accounting/manual-journals/{id}/edit', [ManualJournalController::cl
     ->name('accounting.manual_journals.edit');
 Route::put('/accounting/manual-journals/{id}', [ManualJournalController::class, 'update'])
     ->name('accounting.manual_journals.update');
+
+
+
+
+Route::prefix('masters/account-templates')->name('masters.account_templates.')->group(function () {
+    Route::get('/', [AccountTemplateController::class, 'index'])->name('index');
+    Route::post('/', [AccountTemplateController::class, 'store'])->name('store');
+    Route::get('/{accountTemplate}/edit', [AccountTemplateController::class, 'edit'])->name('edit');
+    Route::put('/{accountTemplate}', [AccountTemplateController::class, 'update'])->name('update');
+    Route::delete('/{accountTemplate}', [AccountTemplateController::class, 'destroy'])->name('destroy');
+});

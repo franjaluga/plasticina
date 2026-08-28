@@ -12,6 +12,7 @@ class Account extends Model
     protected $table = 'accounts';
 
     protected $fillable = [
+        'owner_id',
         'code', 
         'name', 
         'category'

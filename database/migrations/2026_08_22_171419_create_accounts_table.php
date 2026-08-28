@@ -12,10 +12,14 @@ return new class extends Migration {
             $table->collation = 'utf8mb4_unicode_ci';
 
             $table->id();
-            $table->string('code')->unique();
+            $table->foreignId('owner_id')->constrained('owners')->onDelete('cascade'); // Relación directa con el owner
+            $table->string('code', 20);
             $table->string('name');
             $table->enum('category', ['activo', 'pasivo', 'patrimonio', 'perdida', 'ganancia']);
             $table->timestamps();
+
+            // Índice único compuesto para que cada owner pueda tener sus propios códigos sin colisionar
+            $table->unique(['owner_id', 'code']);
         });
     }
 

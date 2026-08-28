@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        $this->call(AccountSeeder::class);
+        // $this->call(AccountSeeder::class); // <-- Comentado porque AccountSeeder ya no es global
 
         $this->call(OwnerSeeder::class);
     }

@@ -7,9 +7,10 @@ use App\Models\Accounts\Account;
 
 class AccountSeeder extends Seeder
 {
-    public function run(): void
+    // Método estático para proveer las cuentas al momento de registrar un Owner
+    public static function getTemplateAccounts(): array
     {
-        $accounts = [
+        return [
             // ACTIVO CORRIENTE (101)
             ['code' => '1010101', 'name' => 'CAJA', 'category' => 'activo'],
             ['code' => '1010102', 'name' => 'BANCOS', 'category' => 'activo'],
@@ -185,6 +186,11 @@ class AccountSeeder extends Seeder
             ['code' => '4019101', 'name' => 'IMPUESTO A LA RENTA', 'category' => 'perdida'],
             ['code' => '4019320', 'name' => 'PERDIDAS OPE. DISCONTINUADA', 'category' => 'perdida'],
         ];
+    }
+
+    public function run(): void
+    {
+        $accounts = self::getTemplateAccounts();
 
         foreach ($accounts as $acc) {
             Account::updateOrCreate(
