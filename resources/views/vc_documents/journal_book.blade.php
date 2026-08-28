@@ -57,7 +57,10 @@
                                     <span class="mx-1 text-gray-400">|</span> Fecha: <span class="font-normal">{{ $journal->date }}</span>
                                     
                                     @if($journal->document)
-                                        <span class="text-gray-500 font-normal ml-2">(Doc Folio: 
+                                        <span class="text-gray-500 font-normal ml-2">
+                                            (Doc: <span class="font-semibold text-gray-700">{{ $journal->document->documentType->name ?? $journal->document->document_type_id }}</span>
+                                            | RUT: <span class="font-semibold text-gray-700">{{ $journal->document->entity->rut ?? 'N/A' }}</span>
+                                            | Folio: 
                                             <a href="{{ route('accounting.documents.detail', $journal->document->id) }}" class="text-indigo-600 hover:underline font-bold">
                                                 {{ $journal->document->folio }}
                                             </a>)

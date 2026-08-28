@@ -157,3 +157,9 @@ Route::get('/vc-documents/libro-diario/rango', function () {
 // La ruta que procesará el reporte utilizando el servicio
 Route::get('/vc-documents/libro-diario/generar', [VCDocumentController::class, 'journalBook'])
     ->name('vc_documents.journal_book.generate');
+
+// Edición de Asientos de V/C
+Route::get('/accounting/journals/{id}/edit', [AccountingReportController::class, 'editJournal'])
+    ->name('accounting.journals.edit');
+Route::put('/accounting/journals/{id}', [AccountingReportController::class, 'updateJournal'])
+    ->name('accounting.journals.update');

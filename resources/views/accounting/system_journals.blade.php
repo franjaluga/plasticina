@@ -117,7 +117,7 @@
                         <th class="py-3 px-4">RUT</th>
                         <th class="py-3 px-4">Tipo Documento</th>
                         <th class="py-3 px-4">Folio Ref.</th>
-                        <th class="py-3 px-4 w-20 text-center">Acciones</th>
+                        <th class="py-3 px-4 w-28 text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 bg-white">
@@ -173,15 +173,25 @@
                                 @endif
                             </td>
                             
-                            <!-- Acciones -->
+                            <!-- Acciones (Editar y Eliminar) -->
                             <td class="py-3 px-4 text-center">
-                                <form action="{{ route('accounting.audit.destroy', $journal->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este asiento y su documento asociado?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2.5 py-1 rounded transition text-sm" title="Eliminar Asiento">
-                                        &times;
-                                    </button>
-                                </form>
+                                <div class="flex items-center justify-center space-x-1.5">
+                                    <!-- Botón Editar (Solo disponible si el asiento está vinculado a un documento V/C) -->
+                                    @if($journal->vc_document_id)
+                                        <a href="{{ route('accounting.journals.edit', $journal->id) }}" class="bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold px-2 py-1 rounded transition text-xs" title="Editar Asiento V/C">
+                                            Editar
+                                        </a>
+                                    @endif
+
+                                    <!-- Botón Eliminar -->
+                                    <form action="{{ route('accounting.audit.destroy', $journal->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar este asiento y su documento asociado?');" class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-2.5 py-1 rounded transition text-sm" title="Eliminar Asiento">
+                                            &times;
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
