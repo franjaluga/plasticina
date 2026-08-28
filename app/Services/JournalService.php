@@ -19,16 +19,19 @@ class JournalService
         return DB::transaction(function () use ($document, $accountMapping, $glosa) {
             
             $ownerId = $document->owner_id;
-            $year = $document->year_register;
 
             if (!$ownerId) {
                 throw new Exception("El documento no tiene un Owner asociado, no se puede generar el asiento contable.");
             }
 
-            // 2. Calcular el siguiente número correlativo de asiento para ESTE owner y ESTE año.
+            // Definir la fecha de centralización y extraer su año correspondiente
+            $centralizeDate = $document->date_centralize ?? $document->date;
+            $centralizeYear = (int) date('Y', strtotime($centralizeDate));
+
+            // 2. Calcular el siguiente número correlativo de asiento para ESTE owner y ESTE año de centralización.
             // Usamos lockForUpdate() para bloquear la lectura y evitar duplicados en procesos masivos/concurridos.
             $lastEntryNumber = Journal::where('owner_id', $ownerId)
-                ->where('year', $year)
+                ->where('year', $centralizeYear)
                 ->lockForUpdate()
                 ->max('entry_number');
 
@@ -77,13 +80,13 @@ class JournalService
                 throw new Exception("El asiento contable no está cuadrado. Total Debe: {$totalDebit}, Total Haber: {$totalCredit}");
             }
 
-            // 5. Crear cabecera incluyendo el Owner, el Año, el Correlativo y la Glosa (description)
+            // 5. Crear cabecera utilizando la fecha de centralización y su respectivo año
             $journal = Journal::create([
                 'vc_document_id' => $document->id,
                 'owner_id'       => $ownerId,
-                'year'           => $year,
+                'year'           => $centralizeYear,
                 'entry_number'   => $nextEntryNumber,
-                'date'           => $document->date,
+                'date'           => $centralizeDate,
                 'description'    => $glosa ?: ('Contabilización documento folio ' . $document->folio),
                 'total_debit'    => $totalDebit,
                 'total_credit'   => $totalCredit,
