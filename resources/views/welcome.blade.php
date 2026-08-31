@@ -38,12 +38,20 @@
                 </div>
             </div>
 
-            <!-- Selector de Año de Trabajo (Ocupa 1 columna) -->
+            <!-- Selector de Año de Trabajo (Ocupa 1 columna con bloqueo/edición) -->
             <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-col justify-between">
-                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 block mb-1">Año de Trabajo</span>
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Año de Trabajo</span>
+                    <!-- Botón para habilitar/desbloquear la edición -->
+                    <button type="button" id="editYearBtn" onclick="toggleYearEdition()" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 px-2 py-0.5 rounded transition">
+                        Cambiar ejercicio contable
+                    </button>
+                </div>
+
                 <form action="{{ route('period.update') }}" method="POST" class="flex items-center space-x-2">
                     @csrf
-                    <select name="working_year" onchange="this.form.submit()" class="w-full text-sm font-bold text-slate-800 bg-white border border-slate-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer shadow-sm">
+                    <!-- Select bloqueado por defecto -->
+                    <select name="working_year" id="workingYearSelect" disabled class="w-full text-sm font-bold text-slate-800 bg-slate-100 border border-slate-300 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-not-allowed shadow-sm transition">
                         @php
                             $currentYearSelected = session('working_year', date('Y'));
                         @endphp
@@ -53,6 +61,11 @@
                             </option>
                         @endfor
                     </select>
+
+                    <!-- Botón Guardar oculto por defecto -->
+                    <button type="submit" id="saveYearBtn" class="hidden text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg shadow-sm transition whitespace-nowrap">
+                        Guardar
+                    </button>
                 </form>
             </div>
 
@@ -149,5 +162,41 @@
         </div>
     </div>
 
+    <!-- Script para alternar el estado de edición del Año de Trabajo -->
+    <script>
+        function toggleYearEdition() {
+            const selectElement = document.getElementById('workingYearSelect');
+            const editBtn = document.getElementById('editYearBtn');
+            const saveBtn = document.getElementById('saveYearBtn');
+
+            if (selectElement.hasAttribute('disabled')) {
+                // Desbloquear campo
+                selectElement.removeAttribute('disabled');
+                selectElement.classList.remove('bg-slate-100', 'cursor-not-allowed');
+                selectElement.classList.add('bg-white', 'cursor-pointer', 'border-indigo-500');
+                
+                // Cambiar botón Editar a Cancelar
+                editBtn.textContent = 'Cancelar';
+                editBtn.classList.remove('text-indigo-600', 'bg-indigo-50');
+                editBtn.classList.add('text-rose-600', 'bg-rose-50');
+
+                // Mostrar botón Guardar
+                saveBtn.classList.remove('hidden');
+            } else {
+                // Volver a bloquear campo (Cancelar acción)
+                selectElement.setAttribute('disabled', 'disabled');
+                selectElement.classList.add('bg-slate-100', 'cursor-not-allowed');
+                selectElement.classList.remove('bg-white', 'cursor-pointer', 'border-indigo-500');
+                
+                // Restaurar botón Editar
+                editBtn.textContent = 'Editar';
+                editBtn.classList.add('text-indigo-600', 'bg-indigo-50');
+                editBtn.classList.remove('text-rose-600', 'bg-rose-50');
+
+                // Ocultar botón Guardar
+                saveBtn.classList.add('hidden');
+            }
+        }
+    </script>
 </body>
 </html>
