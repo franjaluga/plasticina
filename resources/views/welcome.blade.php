@@ -87,7 +87,7 @@
         <!-- 3 Botones Principales -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             
-            <!-- 1. Ingreso Manual (Agrupa Registros V/C y Asiento Manual con acceso directo al formulario manual) -->
+            <!-- 1. Ingreso Manual -->
             <div class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-indigo-500 hover:shadow-lg transition text-left flex flex-col justify-between">
                 <div>
                     <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:bg-indigo-600 group-hover:text-white transition">
@@ -107,7 +107,7 @@
                 </div>
             </div>
 
-            <!-- 2. Importadores (Apunta a ingress.import) -->
+            <!-- 2. Importadores -->
             <a href="{{ route('ingress.import') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-green-500 hover:shadow-lg transition text-left flex flex-col justify-between">
                 <div>
                     <div class="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center mb-4 group-hover:bg-green-600 group-hover:text-white transition">
@@ -121,7 +121,7 @@
                 </span>
             </a>
 
-            <!-- 3. Reportes y Análisis (Agrupa Reportes, Auditoría, Cobros/Pagos y Asientos del Sistema) -->
+            <!-- 3. Reportes y Análisis -->
             <a href="{{ route('reports.analytics') }}" class="group p-6 bg-white border border-slate-200 rounded-2xl hover:border-purple-500 hover:shadow-lg transition text-left flex flex-col justify-between">
                 <div>
                     <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-4 group-hover:bg-purple-600 group-hover:text-white transition">
@@ -137,16 +137,15 @@
 
         </div>
 
-        <!-- Footer -->
-        <div class="mt-8 pt-4 border-t border-slate-200 text-xs text-slate-400 flex justify-between items-center">
+        <!-- Footer y Configuración General -->
+        <div class="mt-8 pt-4 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-400">
             <p>Sistema Contable v1.0</p>
-            @if($activeOwner)
-                <a href="{{ route('owners.accounts.index', $activeOwner->id) }}" class="text-indigo-600 hover:text-indigo-900 text-xs font-semibold">
-                    Ver/Editar Plan de Cuentas
+            
+            <div class="flex items-center space-x-4">
+                <a href="{{ route('system.config') }}" class="inline-flex items-center space-x-1 font-semibold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition">
+                    <span>⚙️ Configuración General</span>
                 </a>
-            @else
-                <span class="text-slate-400 text-xs italic">Seleccione un owner para ver su plan de cuentas</span>
-            @endif
+            </div>
         </div>
     </div>
 

@@ -118,6 +118,9 @@
                                 @endif
                             </td>
                             <td class="py-3 px-4 text-center space-x-1 whitespace-nowrap">
+                                <!-- Botón Ver Datos -->
+                                <a href="{{ route('owners.show', $owner) }}" class="px-2.5 py-1 bg-sky-600 text-white rounded-md text-xs font-semibold hover:bg-sky-700 transition shadow-sm inline-block">Ver</a>
+
                                 <!-- Botón Activar -->
                                 @unless($owner->is_active)
                                     <form action="{{ route('owners.activate', $owner) }}" method="POST" class="inline">

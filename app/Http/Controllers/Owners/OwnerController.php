@@ -107,4 +107,12 @@ class OwnerController
 
         return redirect()->route('owners.index')->with('success', 'Owner activado correctamente.');
     }
+
+    public function show(Owner $owner)
+    {
+        // Cargar estadísticas o información adicional si lo deseas (ej: cantidad de cuentas, documentos)
+        $owner->loadCount(['accounts']);
+        
+        return view('owners.show', compact('owner'));
+    }
 }

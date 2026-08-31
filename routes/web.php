@@ -204,3 +204,12 @@ Route::prefix('masters/account-templates')->name('masters.account_templates.')->
     Route::put('/{accountTemplate}', [AccountTemplateController::class, 'update'])->name('update');
     Route::delete('/{accountTemplate}', [AccountTemplateController::class, 'destroy'])->name('destroy');
 });
+
+// CONFIGURACIÓN DEL SISTEMA
+Route::get('/system/config', function () {
+    return view('system.config');
+})->name('system.config');
+
+
+// OWNERS
+Route::resource('owners', OwnerController::class)->except(['create', 'edit']);
