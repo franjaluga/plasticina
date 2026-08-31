@@ -91,7 +91,7 @@ Route::get('/reports/balance-context', function () {
 })->name('reports.balance_context');
 
 Route::get('/reports/ledger-context', function () {
-    $accounts = Account::orderBy('code', 'asc')->get();
+    $accounts = Account::getActiveOwnerAccounts();
     return view('reports.ledger_context', compact('accounts'));
 })->name('reports.ledger_context');
 
@@ -193,4 +193,14 @@ Route::prefix('accounting/audit')->name('accounting.audit.')->group(function () 
     Route::delete('/{journal}/only', [AuditController::class, 'destroyJournalOnly'])->name('destroy');
     // O si prefieres la otra opción:
     // Route::delete('/{journal}/document', [AuditController::class, 'destroyWithDocument'])->name('destroy');
+});
+
+
+// MAESTROS GENERALES (GESTION BASE DE PLANES DE CUENTAS PARA COPIAS)
+Route::prefix('masters/account-templates')->name('masters.account_templates.')->group(function () {
+    Route::get('/', [AccountTemplateController::class, 'index'])->name('index');
+    Route::post('/', [AccountTemplateController::class, 'store'])->name('store');
+    Route::get('/{accountTemplate}/edit', [AccountTemplateController::class, 'edit'])->name('edit');
+    Route::put('/{accountTemplate}', [AccountTemplateController::class, 'update'])->name('update');
+    Route::delete('/{accountTemplate}', [AccountTemplateController::class, 'destroy'])->name('destroy');
 });
