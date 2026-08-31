@@ -1,6 +1,23 @@
-# Plasticina
-Un sistema contable libre y gratuito para llevar la administración de tu negocio
+<div align="center">
 
+  # Plasticina
+  
+  <p align="center">
+    <strong>Sistema contable moderno, multiempresa y de código abierto para la gestión financiera de tu negocio.</strong>
+  </p>
+
+  <p align="center">
+    <img src="https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP Version">
+    <img src="https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel">
+    <img src="https://img.shields.io/badge/MariaDB-11.x-003545?style=for-the-badge&logo=mariadb&logoColor=white" alt="MariaDB">
+    <img src="https://img.shields.io/badge/Tailwind_CSS-38BDF8?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS">
+    <img src="https://img.shields.io/badge/License-AGPLv3-blue.svg?style=for-the-badge" alt="License AGPLv3">
+  </p>
+
+  <br>
+</div>
+
+---
 indice
 
 * [Configuración inicial](#configuración-inicial)
