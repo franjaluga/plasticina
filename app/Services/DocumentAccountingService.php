@@ -92,15 +92,37 @@ class DocumentAccountingService
             ->get();
     }
 
-    public function getPendingDocuments(): Collection
+    public function getPendingDocuments(array $filters = []): Collection
     {
         $activeOwner = app(OwnerService::class)->getActiveOwner();
         $workingYear = session('working_year', date('Y'));
 
-        return VCDocument::where('owner_id', $activeOwner?->id)
+        $query = VCDocument::with(['entity', 'documentType'])
+            ->where('owner_id', $activeOwner?->id)
             ->where('year_register', $workingYear)
-            ->doesntHave('journal')
-            ->orderBy('month_register', 'asc')
+            ->doesntHave('journal');
+
+        // 1. Filtro por RUT (Entidad)
+        if (!empty($filters['rut'])) {
+            $query->whereHas('entity', fn($e) => $e->where('rut', 'LIKE', '%' . $filters['rut'] . '%'));
+        }
+
+        // 2. Filtro por Tipo de Documento
+        if (!empty($filters['document_type_id'])) {
+            $query->where('document_type_id', $filters['document_type_id']);
+        }
+
+        // 3. Filtro por Fecha específica o Rango
+        if (!empty($filters['date'])) {
+            $query->where('date', $filters['date']);
+        }
+
+        // 4. Filtro por Folio
+        if (!empty($filters['folio'])) {
+            $query->where('folio', $filters['folio']);
+        }
+
+        return $query->orderBy('month_register', 'asc')
             ->orderBy('date', 'asc')
             ->get();
     }

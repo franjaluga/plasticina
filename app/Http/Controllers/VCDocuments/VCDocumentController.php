@@ -77,13 +77,16 @@ class VCDocumentController extends Controller
         }
     }
 
-    public function pendingList(DocumentAccountingService $accountingService)
+    public function pendingList(Request $request, DocumentAccountingService $accountingService)
     {
-        $documents = $accountingService->getPendingDocuments();
+        $filters = $request->only(['rut', 'document_type_id', 'date', 'folio']);
+        
+        $documents = $accountingService->getPendingDocuments($filters);
         
         $accounts = Account::getActiveOwnerAccounts();
+        $documentTypes = \App\Models\Masters\DocumentType::all();
 
-        return view('vc_documents.pending', compact('documents', 'accounts'));
+        return view('vc_documents.pending', compact('documents', 'accounts', 'documentTypes', 'filters'));
     }
 
     public function batchContabilizar(Request $request, DocumentAccountingService $accountingService)
