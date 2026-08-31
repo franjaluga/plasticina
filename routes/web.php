@@ -15,6 +15,7 @@ use App\Http\Controllers\Accounting\AuditController;
 use App\Http\Controllers\Accounting\PaymentController;
 use App\Http\Controllers\Accounting\AccountTemplateController;
 use App\Http\Controllers\Owners\AccountController;
+use App\Http\Controllers\System\DatabaseController;
 
 Route::get('/', function (OwnerService $ownerService) {
     $activeOwner = $ownerService->getActiveOwner();
@@ -213,3 +214,7 @@ Route::get('/system/config', function () {
 
 // OWNERS
 Route::resource('owners', OwnerController::class)->except(['create', 'edit']);
+
+// FUNCIONALIDADES DE BASE DE DATOS
+Route::get('/system/database/export', [DatabaseController::class, 'export'])
+    ->name('system.database.export');

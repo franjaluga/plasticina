@@ -26,6 +26,15 @@
                 </div>
                 <span class="text-amber-600 font-bold text-lg group-hover:translate-x-1 transition-transform">&rarr;</span>
             </a>
+
+            <!-- Botón para Exportar Base de Datos MariaDB -->
+            <a href="{{ route('system.database.export') }}" class="flex items-center justify-between p-5 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 rounded-xl transition group shadow-sm">
+                <div>
+                    <h2 class="text-sm font-bold text-slate-800 group-hover:text-emerald-800">Exportar Base de Datos (MariaDB)</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Descarga un respaldo completo en formato SQL listo para restaurar en cualquier momento.</p>
+                </div>
+                <span class="text-emerald-600 font-bold text-lg group-hover:translate-x-1 transition-transform">&darr;</span>
+            </a>
         </div>
     </div>
 </body>
