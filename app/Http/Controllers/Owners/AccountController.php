@@ -65,7 +65,7 @@ class AccountController extends Controller
         }
     }
 
-    // Elimina una cuenta del owner
+    // Elimina una cuenta del owner con validación de uso previo
     public function destroy(Owner $owner, Account $account)
     {
         if ($account->owner_id !== $owner->id) {
@@ -73,11 +73,24 @@ class AccountController extends Controller
         }
 
         try {
-            // Opcional: Validar si la cuenta tiene movimientos asociados antes de borrar
+            // Validar si la cuenta está siendo utilizada en al menos un asiento contable del owner
+            $isUsed = \DB::table('journal_entries')
+                ->join('journals', 'journals.id', '=', 'journal_entries.journal_id')
+                ->where('journals.owner_id', $owner->id)
+                ->where('journal_entries.account_code', $account->code)
+                ->exists();
+
+            if ($isUsed) {
+                return back()->with('error', 'No se puede eliminar la cuenta "' . $account->code . ' - ' . $account->name . '" porque tiene movimientos registrados en los asientos contables de esta empresa.');
+            }
+
+            // Si no tiene movimientos, se procede a eliminar de forma segura
             $account->delete();
-            return back()->with('success', 'Cuenta eliminada exitosamente.');
+            
+            return back()->with('success', 'Cuenta contable eliminada exitosamente.');
+            
         } catch (Exception $e) {
-            return back()->with('error', 'No se puede eliminar la cuenta porque tiene registros asociados.');
+            return back()->with('error', 'Ocurrió un error al intentar eliminar la cuenta: ' . $e->getMessage());
         }
     }
 }
